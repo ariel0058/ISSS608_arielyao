@@ -1,8 +1,8 @@
 {
-  "hash": "6438ce65199461178bb9dba5258d0a1d",
+  "hash": "004ad3ca6c68fa827138f15079fb4919",
   "result": {
     "engine": "knitr",
-    "markdown": "---\ntitle: \"Hands-on Exercise 1\"\nauthor: \"Yao Yao\"\ndate: \"January 8, 2026\"\ndate-modified: \"last-modified\" \nexecute: \n  eval: true\n  echo: true\n  warning: false\n  freeze: true\n---\n\n# Overview\n\n## Getting Started\n\n::: {.cell}\n\n```{.r .cell-code}\npacman::p_load(tidyverse)\n```\n:::\n\n\n# The Data\n\n# First Visualisation\n",
+    "markdown": "---\ntitle: \"Hands-on Exercise 1\"\nauthor: \"Yao Yao\"\ndate: \"January 8, 2026\"\ndate-modified: \"last-modified\" \nexecute: \n  eval: true\n  echo: true\n  warning: false\n  freeze: true\n---\n\n# Overview\nThis is my first attempt to create the coursework website.\n\n## Getting Started\n\n::: {.cell}\n\n```{.r .cell-code}\npacman::p_load(tidyverse)\n```\n:::\n\n\n# The Data\n\n# First Visualisation\n",
     "supporting": [],
     "filters": [
       "rmarkdown/pagebreak.lua"
