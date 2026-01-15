@@ -1,30 +1,30 @@
 [
   {
-    "objectID": "about.html",
-    "href": "about.html",
-    "title": "About",
-    "section": "",
-    "text": "About this site\n\n1 + 1\n\n[1] 2"
-  },
-  {
-    "objectID": "index.html",
-    "href": "index.html",
-    "title": "ISSS608_arielyao",
-    "section": "",
-    "text": "This is a Quarto website.\nTo learn more about Quarto websites visit https://quarto.org/docs/websites.\n\n1 + 1\n\n[1] 2"
-  },
-  {
     "objectID": "HE01.html",
     "href": "HE01.html",
     "title": "Hands-on Exercise 1",
     "section": "",
-    "text": "This is my first attempt to create the coursework website.\n\n\n\npacman::p_load(tidyverse)"
+    "text": "This is my first attempt to create the coursework website."
   },
   {
     "objectID": "HE01.html#getting-started",
     "href": "HE01.html#getting-started",
     "title": "Hands-on Exercise 1",
     "section": "",
-    "text": "pacman::p_load(tidyverse)"
+    "text": "pacman::p_load(tidyverse)\n\nexam_data &lt;- read_csv(\"chap01/data/Exam_data.csv\")\n\nggplot(data=exam_data, \n       aes(x= MATHS)) +\n  geom_histogram(bins=20) +\n    facet_wrap(~ CLASS)"
+  },
+  {
+    "objectID": "index.html",
+    "href": "index.html",
+    "title": "ISSS608_arielyao",
+    "section": "",
+    "text": "This is a Quarto website.\nTo learn more about Quarto websites visit https://quarto.org/docs/websites.\n\n1+1\n\n[1] 2"
+  },
+  {
+    "objectID": "about.html",
+    "href": "about.html",
+    "title": "About",
+    "section": "",
+    "text": "About this site\n\n1 + 1\n\n[1] 2"
   }
 ]
