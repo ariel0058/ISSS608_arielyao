@@ -11,7 +11,7 @@ tidyverse)
 
 
 exam_data <- read_csv(
-  "chap01/data/Exam_data.csv",
+  "data/Exam_data.csv",
   show_col_types = FALSE
 )
 
