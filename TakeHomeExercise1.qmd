@@ -1,0 +1,177 @@
+---
+title: "TakeHomeExercise1"
+---
+# Overview
+
+## Setting the scene
+xxx
+
+## Our task
+xxx
+
+# Getting started
+xxx
+
+## Load packages 
+xxx
+
+```{r}
+pacman::p_load(tidyverse, haven,
+               ggrepel, ggthemes,
+               ggridges, ggdist,
+               patchwork, scales)
+
+```
+## Import data 
+The dataset used in the exercise is survey raw data retrieved from the https://www.sciencedirect.com/science/article/pii/S235234092100576X. We import this dataset as survey_raw_data.
+
+```{r}
+survey_raw_data <- read_csv("data/Upload for elsiver.csv",show_col_types = FALSE)
+parsing_issue <- problems(survey_raw_data)
+
+print(parsing_issue)
+```
+
+
+## Data pre-processing 
+We first take a look at the data, and handle data when necessary.
+
+
+### Summary of data 
+Using the glimpse function, we saw the data has correct 725 rows and 30 columns, mainly in double type, and have many NA values. We first need to select the variables for our study, then for the selected variables, convert the correct type and handle NA values. We don't need to check duplicates for records, as the records with same survey answer won't be accounted as duplicated records in our case.
+
+
+```{r}
+glimpse(survey_raw_data)
+```
+
+
+
+### Rename selected variables
+将变量名重命名为更具可读性的标签，保证理解清晰
+
+```{r}
+library(dplyr)
+
+survey_raw_data <- survey_raw_data %>%
+  rename(
+    province = CPRO,
+    gender = CGEN,
+    race = CRAC,
+    career = CJOB,
+    income_quintile = CQUI,
+    total_income = TEIN,
+    agri_income = TAIN,
+    service_industrial_income = TSII,
+    others_income = TOIN,
+    education = FEDU,
+    vocational_training = FVTP,
+    credit_accessibility = FCRA,
+    tech_application = FTAP,
+    cottage_house = LHO1,
+    roofed_house = LHO2,
+    solid_house = LHO3,
+    building = LHO4,
+    real_loan = LCRE,
+    saving = LSAV,
+    working_days = LWDA
+  )
+
+```
+
+
+### Convert data types
+根据数据说明，将名义型数据转换为factor，序数型数据转换为ordered factor, scale数据保持double类型
+```{r}
+# 转换为因子（Nominal 变量）
+nominal_vars <- c("province", "career", "income_quintile", "education", "PPO1", "PPO2", "PPO3", "PPO4", "PPO5", 
+                  "ARO1", "ARO2", "ARO3", "ARO4", "ARO5")
+survey_raw_data[nominal_vars] <- lapply(survey_raw_data[nominal_vars], as.factor)
+
+# 转换为有序因子（Ordinal 变量）
+survey_raw_data$gender <- factor(survey_raw_data$gender, levels = c(1, 2), labels = c("Male", "Female"))
+survey_raw_data$race <- factor(survey_raw_data$race, levels = c(1, 2), labels = c("King", "Minorities"))
+survey_raw_data$vocational_training <- ordered(survey_raw_data$vocational_training, levels = c(1, 2), labels = c("No", "Yes"))
+survey_raw_data$credit_accessibility <- ordered(survey_raw_data$credit_accessibility, levels = c(1, 2), labels = c("No", "Yes"))
+survey_raw_data$tech_application <- ordered(survey_raw_data$tech_application, levels = c(1, 2), labels = c("Low", "Adequate"))
+
+```
+
+
+### Reselect the variables for research scope
+
+```{r}
+selected_vars <- c("province", "gender", "race", "career", "income_quintile", 
+                   "total_income", "agri_income", "service_industrial_income", "others_income", "education", 
+                   "vocational_training", "credit_accessibility")
+analysis_data <- survey_raw_data %>%
+  select(all_of(selected_vars))
+```
+
+### Preview pre-processed dataframe
+After summarizing the selected variables, we observed that career has 49 NA values and education has 23 NA values. 
+
+```{r}
+summary(analysis_data)
+
+```
+To clean the data more effectively for each research question without losing too many samples, two separate cleaned datasets will be created for further analysis.
+
+data_topic1 will be used for Research Question 1, focusing on income, education, vocational training, and credit accessibility.
+data_topic2 will be used for Research Question 2, focusing on gender, race, career choices, and income.
+
+```{r}
+# 数据集 1: 用于课题一 (收入分布，教育、职业培训天数和信贷可得性对收入的影响)
+data_topic1 <- analysis_data %>%
+  select(province, gender, race, income_quintile, total_income, agri_income, 
+         service_industrial_income, others_income, education, vocational_training, credit_accessibility) %>%
+  filter(complete.cases(.)) # 删除带有NA值的行
+
+# 数据集 2: 用于课题二 (性别和种族对职业选择和收入的影响)
+data_topic2 <- analysis_data %>%
+  select(province, gender, race, career, total_income) %>%
+  filter(complete.cases(.)) # 删除带有NA值的行
+
+# 打印删除后每个数据集的行数和缺失值情况
+cat("Data for Topic 1 (after removing NA rows):\n")
+cat("Rows:", nrow(data_topic1), "\n")
+
+cat("Data for Topic 2 (after removing NA rows):\n")
+cat("Rows:", nrow(data_topic2), "\n")
+```
+
+# EDA 1
+How does income distribution vary across different groups of informal workers, and how do education level, vocational training days, and credit accessibility affect income?
+```{r}
+
+```
+
+
+# EDA 2
+
+```{r}
+```
+
+
+# EDA 3
+
+```{r}
+```
+
+
+# EDA 4
+
+```{r}
+```
+
+
+# EDA 5
+
+```{r}
+```
+
+
+# Summary and conclusion
+
+# References
+
