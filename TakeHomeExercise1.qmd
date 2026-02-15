@@ -1,19 +1,46 @@
 ---
 title: "TakeHomeExercise1"
+author: "Yao Yao"
+date: "February 15, 2026"
+date-modified: "last-modified" 
+execute: 
+  eval: true
+  echo: true
+  warning: false
+  freeze: true
 ---
+
 # Overview
 
 ## Setting the scene
-xxx
+
+Educators have long studied how internal motivation and external contribute to student's performance success. In Vietnam, research shows that lecturer capacity and student interest are the key drivers of performance.
 
 ## Our task
-xxx
+
+Our goal was to dive into a survey dataset of 2170 students and alumni (collected March–June 2023) from University of Education - Vietnam National University, Hanoi, to see what’s actually affecting student's learning performance. We cleaned and visualized the data to check how things like gender, family background, and university support impact GPA.
 
 # Getting started
-xxx
 
-## Load packages 
-xxx
+## Load packages
+
+We load the following R packages using the `pacman::p_load()` function:
+
+-   `tidyverse`: Core collection of R packages, clean data with dplyr and plot with ggplot2.
+
+-   `haven`: To import the survey data from SPSS or Stata.
+
+-   `ggrepel`: To prevent chart labels from overlapping so they’re more readable.
+
+-   `ggthemes`: To provide professional looking for plots.
+
+-   `ggridges`: To support ridgeline plots.
+
+-   `ggdist`: To build visualizations of distributions, confidence intervals.
+
+-   `patchwork`: To display multiple plots together into one layout.
+
+-   `scales`: Used for formatting axes.
 
 ```{r}
 pacman::p_load(tidyverse, haven,
@@ -22,156 +49,450 @@ pacman::p_load(tidyverse, haven,
                patchwork, scales)
 
 ```
-## Import data 
-The dataset used in the exercise is survey raw data retrieved from the https://www.sciencedirect.com/science/article/pii/S235234092100576X. We import this dataset as survey_raw_data.
+
+## Import data
+
+The dataset used in the exercise is survey raw data retrieved from the [Dataset of factors affecting learning outcomes of students at the University of Education, Vietnam National University, Hanoi](https://data.mendeley.com/datasets/23ppcdbmhc/1.)
+
+We import this dataset as survey_raw_data.
 
 ```{r}
-survey_raw_data <- read_csv("data/Upload for elsiver.csv",show_col_types = FALSE)
-parsing_issue <- problems(survey_raw_data)
-
-print(parsing_issue)
+survey_raw_data <- read_csv("data/Database paper.csv",show_col_types = FALSE)
 ```
 
+## Data pre-processing
 
-## Data pre-processing 
 We first take a look at the data, and handle data when necessary.
 
+### Summary of data
 
-### Summary of data 
-Using the glimpse function, we saw the data has correct 725 rows and 30 columns, mainly in double type, and have many NA values. We first need to select the variables for our study, then for the selected variables, convert the correct type and handle NA values. We don't need to check duplicates for records, as the records with same survey answer won't be accounted as duplicated records in our case.
+Checking the data structure in the Environment, we’ve got 2170 rows and 22 columns, all currently set as double types. 
 
+First, we need to slim down the dataset and filter for the specific variables we're studying. For those selected variables, we’ll handle any NA values and convert them into the right data types for analysis. We don't need to worry about checking for duplicates here, since identical survey answers are valid in this survey study.
+
+### Filtering data for selected variables
+
+Next, we want to reduce the size of the dataset to focus on the variables most relevant to our analysis.
+
+Following the framework used in the original research, we categorized our selection into two groups: **Group A**, which covers objective demographic factors, and **Group B**, which focuses on student perceptions and assessments. This approach provides a comprehensive view of what drives learning outcomes.
+
+Based on the preliminary descriptive and inferential findings from the study, we have selected the following variables: 
+
+- **Group A**: Demographic and Objective Factors 
+    - **GPA**: GPA is the most direct measure of learning outcomes. With 54.8% of students at a "Fair" level and only 4.9% at "Excellent," the distribution is slightly skewed. 
+    - **Gender**: Since the sample is 88.9% female, we want to investigate if this gender imbalance correlates with academic performance. 
+    - **Time Management**: The data shows high academic engagement, with 82.2% of students studying for more than 8 hours daily. We want to compare how time spent on studies versus social media and social life. 
+    - **Family Background**: Significant correlations were found between parental occupation and GPA. We will examine how parental education, occupation types, and economic status (poverty level) impact success.
+- **Group B**: Student Perceptions and Assessments
+    - **Learning Dimensions**: Initial scores show that "Quality of Lecturers" is highly rated, while "Environment Adaptation" is significantly lower. This suggests that while teaching is strong, students still face hurdles in adjusting to university life. We will analyze the distribution across all nine perception dimensions.
+
+| Variable Name | Type | Description |
+|:-----------------------|:-----------------------|:-----------------------|
+| GPA | Categorical Ordered | Academic performance coded as levels 1–5 (Poor to Excellent) |
+| Time_Friends, Time_SocialMedia, Time_Studying | Categorical Ordered | Daily time allocation coded in intervals |
+| Mother_Edu, Father_Edu | Categorical Ordered | Parental education levels ranging from Primary to University/Graduate |
+| Adapt_Learning_Uni, Study_Methods, SupportOf_Uni, SupportOf_Lec, Facilitie_Uni, Quality_Lecturer, TrainingCurriculum, Competitive_Class, InfluenceF_Friends | Categorical Ordered | 5-point Likert scales measuring perceptions (Not at all to Very) |
+| Gender | Nominal | Student gender identity (Male/Female) |
+| Mother_Occupation, Father_Occupation | Nominal | Employment types |
+| Poor_Stu | Nominal | Economic status or financial aid eligibility (Yes/No) |
+
+We then filter the `survey_raw_data` for the aforementioned variables into `survey_data` in the code chunk below.
 
 ```{r}
-glimpse(survey_raw_data)
+survey_data <- survey_raw_data %>%
+  select(
+    GPA, Gender, 
+    Time_Friends, Time_SocicalMedia, Time_Studying,
+    Poor_Stu, Mother_Edu, Father_Edu, Mother_Occupation, Father_Occupation,
+    Adapt_Learning_Uni, Study_Methods, SupportOf_Uni, SupportOf_Lec, 
+    Facilitie_Uni, Quality_Lecturer, TrainingCurriculum, 
+    Competitive_Class, InfluenceF_Friends
+  )
 ```
 
+### Convert data types
+
+From our previous step, we identified that the variables primarily fall into two categories: Categorical Ordered and Nominal. 
+
+For the Categorical Ordered variables, the numerical values represent specific levels of intensity or rank. To preserve this hierarchy, we will convert them into Ordered Factors and define their respective levels to lock in the logical progression.
+
+-   **Categorical Ordered:** GPA, Time_Friends, Time_SocicalMedia, Time_Studying, Mother_Edu, Father_Edu, Adapt_Learning_Uni, Study_Methods, SupportOf_Uni, SupportOf_Lec, Facilitie_Uni, Quality_Lecturer, TrainingCurriculum, Competitive_Class, InfluenceF_Friends
+
+-   **Nominal:** Gender, Poor_Stu, Mother_Occupation, Father_Occupation
 
 
-### Rename selected variables
-将变量名重命名为更具可读性的标签，保证理解清晰
+For the Categorical Ordered variables, the numerical values represent specific levels of intensity or rank. To preserve this hierarchy, we will convert them into Ordered Factors and define their respective levels to lock in the logical progression.
+```{r}
+survey_data <- survey_data %>%
+  mutate(
+    GPA = factor(GPA, levels = c(1, 2, 3, 4, 5), 
+                 labels = c("Poor", "Average", "Fair", "Good", "Excellent"), 
+                 ordered = TRUE),
+    
+    Time_Friends = factor(Time_Friends, levels = c(1, 2, 3, 4, 5),
+                          labels = c("Under 1h", "1-2h", "2-3h", "3-4h", "Over 4h"),
+                          ordered = TRUE),
+    Time_SocicalMedia = factor(Time_SocicalMedia, levels = c(1, 2, 3, 4, 5),
+                                labels = c("Under 1h", "1-2h", "2-3h", "3-4h", "Over 4h"),
+                                ordered = TRUE),
+    Time_Studying = factor(Time_Studying, levels = c(1, 2, 3, 4, 5),
+                            labels = c("Under 2h", "2-4h", "4-6h", "6-8h", "Over 8h"),
+                            ordered = TRUE),
+    
+    Mother_Edu = factor(Mother_Edu, levels = c(1, 2, 3, 4, 5, 6),
+                        labels = c("Other", "Primary", "Secondary", "High School", "College", "Uni/Grad"),
+                        ordered = TRUE),
+    Father_Edu = factor(Father_Edu, levels = c(1, 2, 3, 4, 5, 6),
+                        labels = c("Other", "Primary", "Secondary", "High School", "College", "Uni/Grad"),
+                        ordered = TRUE),
+    
+    across(c(Adapt_Learning_Uni, Study_Methods, SupportOf_Uni, SupportOf_Lec, 
+             Facilitie_Uni, Quality_Lecturer, TrainingCurriculum, 
+             Competitive_Class, InfluenceF_Friends),
+           ~ factor(.x, levels = c(1, 2, 3, 4, 5),
+                    labels = c("Not at all", "Little", "Moderate", "Quite", "Very"),
+                    ordered = TRUE))
+  )
+
+
+```
+
+For the Nominal variables, we will convert them into standard Factors to highlight their categorical nature.
 
 ```{r}
-library(dplyr)
-
-survey_raw_data <- survey_raw_data %>%
-  rename(
-    province = CPRO,
-    gender = CGEN,
-    race = CRAC,
-    career = CJOB,
-    income_quintile = CQUI,
-    total_income = TEIN,
-    agri_income = TAIN,
-    service_industrial_income = TSII,
-    others_income = TOIN,
-    education = FEDU,
-    vocational_training = FVTP,
-    credit_accessibility = FCRA,
-    tech_application = FTAP,
-    cottage_house = LHO1,
-    roofed_house = LHO2,
-    solid_house = LHO3,
-    building = LHO4,
-    real_loan = LCRE,
-    saving = LSAV,
-    working_days = LWDA
+survey_data <- survey_data %>%
+  mutate(
+    Gender = recode(as.character(Gender), '1' = 'MALE', '2' = 'FEMALE'),
+    Gender = as.factor(Gender),
+    Poor_Stu = recode(as.character(Poor_Stu), '1' = 'Yes', '2' = 'No'),
+    Mother_Occupation = factor(as.numeric(Mother_Occupation), levels = c(1, 2, 3, 4, 5),
+                               labels = c("Gov Employee", "Self-employed", "Freelance", "Other", "Not public")),
+    Father_Occupation = factor(as.numeric(Father_Occupation), levels = c(1, 2, 3, 4, 5),
+                               labels = c("Gov Employee", "Self-employed", "Freelance", "Other", "Not public"))
   )
 
 ```
 
+### Checking for missing values
 
-### Convert data types
-根据数据说明，将名义型数据转换为factor，序数型数据转换为ordered factor, scale数据保持double类型
+The `colSums()` function is used to check for missing values, and there are no missing values in the `survey_data`.
+
 ```{r}
-# 转换为因子（Nominal 变量）
-nominal_vars <- c("province", "career", "income_quintile", "education", "PPO1", "PPO2", "PPO3", "PPO4", "PPO5", 
-                  "ARO1", "ARO2", "ARO3", "ARO4", "ARO5")
-survey_raw_data[nominal_vars] <- lapply(survey_raw_data[nominal_vars], as.factor)
+colSums(is.na(survey_data))
+```
 
-# 转换为有序因子（Ordinal 变量）
-survey_raw_data$gender <- factor(survey_raw_data$gender, levels = c(1, 2), labels = c("Male", "Female"))
-survey_raw_data$race <- factor(survey_raw_data$race, levels = c(1, 2), labels = c("King", "Minorities"))
-survey_raw_data$vocational_training <- ordered(survey_raw_data$vocational_training, levels = c(1, 2), labels = c("No", "Yes"))
-survey_raw_data$credit_accessibility <- ordered(survey_raw_data$credit_accessibility, levels = c(1, 2), labels = c("No", "Yes"))
-survey_raw_data$tech_application <- ordered(survey_raw_data$tech_application, levels = c(1, 2), labels = c("Low", "Adequate"))
+## Preview pre-processed dataframe
+
+We use the function `head()` to preview first 10 rows of the pre-processed data.
+
+```{r}
+head(survey_data, 10)
+```
+
+We use the `str()` and observed that dataset is now downsized to 19 columns.
+
+```{r}
+str(survey_data)
+```
+
+# EDA 1: Distribution of performance
+
+## Methods
+
+Our first step is to check the distributions of the target variables, which is GPA. Histogram and boxplot can show how the scores are distributed among the students.
+
+Converting GPA to an Ordered Factor ensures the x-axis follows a logical "Poor" to "Excellent" order in `geom_bar`. For `geom_boxplot`, we use `as.numeric(GPA)` to convert factors to 1–5, allowing proper calculation of medians and quartiles. We add a dark red point via `stat_summary` for the Mean and mark Outliers. Finally, `coord_flip()` combined with `scale_y_continuous` aligns the numeric axis to text labels, ensuring the boxplot and bar chart are logically aligned for comparison.
+
+```{r}
+hist_gpa <- ggplot(data = survey_data, aes(x = GPA)) +
+  geom_bar(fill = "steelblue") + 
+  labs(x = "GPA Levels", y = "Count", title = "Histogram of GPA") +
+  theme_minimal() +
+  theme(
+    plot.title = element_text(size = 10, face = "bold"), 
+    axis.title = element_text(size = 8),               
+    axis.text = element_text(size = 7)                 
+  )
+
+box_gpa <- ggplot(data = survey_data, aes(y = as.numeric(GPA), x = "")) +
+  geom_boxplot(fill = "white", color = "black", outlier.color = "red", outlier.size = 1) +
+  stat_summary(geom = 'point', fun = 'mean', color = "darkred", size = 1.5) + 
+  coord_flip() +
+  scale_y_continuous(
+    breaks = 1:5, 
+    labels = c("Poor", "Average", "Fair", "Good", "Excellent")
+  ) +
+  labs(y = "GPA Distribution Scale", x = "", title = "Box plot of GPA") +
+  theme_minimal() +
+  theme(
+    plot.title = element_text(size = 10, face = "bold"), 
+    axis.title = element_text(size = 8),              
+    axis.text.x = element_text(size = 7),              
+    axis.text.y = element_blank(),                     
+    panel.grid.major.y = element_blank()               
+  )
+
+gpa_distribution <- (box_gpa / hist_gpa) + 
+  plot_layout(heights = c(1, 3.5)) +
+  plot_annotation(
+    title = "GPA Distribution",
+    theme = theme(plot.title = element_text(size = 12, face = "bold")) 
+  )
+
+gpa_distribution
 
 ```
 
+## Insights
 
-### Reselect the variables for research scope
+The boxplot and bar chart suggest a negatively skewed distribution of learning outcome among students. The bar chart highlights majority of the student population is in the middle high achievement areas, with the "Fair" category accounting for the largest proportion at 54.8%, followed by "Good" at 31.9%. Only a small portion of students fall into the "Poor" (3.4%) or "Excellent" (4.9%) categories. 
 
-```{r}
-selected_vars <- c("province", "gender", "race", "career", "income_quintile", 
-                   "total_income", "agri_income", "service_industrial_income", "others_income", "education", 
-                   "vocational_training", "credit_accessibility")
-analysis_data <- survey_raw_data %>%
-  select(all_of(selected_vars))
-```
+This trend is further supported by the boxplot, as the median and the mean both sit within the "Fair" range. The presence of an outlier at "Poor" level suggests a distinct minority still struggles. 
 
-### Preview pre-processed dataframe
-After summarizing the selected variables, we observed that career has 49 NA values and education has 23 NA values. 
+This suggests that the university's academic environment successfully supports most students in achieving "Fair" or "Good" levels, but reaching the "Excellent" still remains a challenge.
 
-```{r}
-summary(analysis_data)
+# EDA 2: Distribution of performance by gender
 
-```
-To clean the data more effectively for each research question without losing too many samples, two separate cleaned datasets will be created for further analysis.
+## Methods
 
-data_topic1 will be used for Research Question 1, focusing on income, education, vocational training, and credit accessibility.
-data_topic2 will be used for Research Question 2, focusing on gender, race, career choices, and income.
+Density plots and box plots are used to compare learning outcomes across genders. Given the big gender imbalance in our sample where females account for 88.9%, density plot is selected to eliminate the influence of disparate sample sizes. This allows for a fair comparison of how GPA is distributed within each gender group. To generate the smooth curves, GPA was converted from a categorical factor into numerical values (1-5) for calculation.
 
 ```{r}
-# 数据集 1: 用于课题一 (收入分布，教育、职业培训天数和信贷可得性对收入的影响)
-data_topic1 <- analysis_data %>%
-  select(province, gender, race, income_quintile, total_income, agri_income, 
-         service_industrial_income, others_income, education, vocational_training, credit_accessibility) %>%
-  filter(complete.cases(.)) # 删除带有NA值的行
 
-# 数据集 2: 用于课题二 (性别和种族对职业选择和收入的影响)
-data_topic2 <- analysis_data %>%
-  select(province, gender, race, career, total_income) %>%
-  filter(complete.cases(.)) # 删除带有NA值的行
+gender_density <- ggplot(data = survey_data, aes(x = as.numeric(GPA), fill = Gender)) +
+  geom_density(alpha = 0.4) +
+  scale_x_continuous(breaks = 1:5, labels = c("Poor", "Average", "Fair", "Good", "Excellent")) +
+  scale_fill_manual(values = c("MALE" = "steelblue", "FEMALE" = "pink")) +
+  labs(title = "Density plots of GPA, colored by gender", x = "GPA Level", y = "Density") +
+  theme_minimal() +
+  theme(
+    legend.position = "none",
+    plot.title = element_text(size = 10, face = "bold"),
+    axis.title = element_text(size = 8),
+    axis.text = element_text(size = 7)
+  )
 
-# 打印删除后每个数据集的行数和缺失值情况
-cat("Data for Topic 1 (after removing NA rows):\n")
-cat("Rows:", nrow(data_topic1), "\n")
+gender_boxplot <- ggplot(data = survey_data, aes(x = Gender, y = as.numeric(GPA), fill = Gender)) +
+  geom_boxplot(alpha = 0.7, outlier.color = "red", outlier.size = 1) +
+  scale_y_continuous(breaks = 1:5, labels = c("Poor", "Average", "Fair", "Good", "Excellent")) +
+  scale_fill_manual(values = c("MALE" = "steelblue", "FEMALE" = "pink")) +
+  labs(title = "Box plots of GPA, colored by gender", x = "Gender", y = "GPA Level") +
+  theme_minimal() +
+  theme(
+    plot.title = element_text(size = 10, face = "bold"),
+    axis.title = element_text(size = 8),
+    axis.text = element_text(size = 7)
+  )
 
-cat("Data for Topic 2 (after removing NA rows):\n")
-cat("Rows:", nrow(data_topic2), "\n")
+gender_analysis <- (gender_density + gender_boxplot) + 
+  plot_layout(widths = c(7, 3)) +
+  plot_annotation(
+    title = "GPA Distribution by Gender",
+    theme = theme(plot.title = element_text(size = 12, face = "bold"))
+  )
+
+gender_analysis
 ```
 
-# EDA 1
-How does income distribution vary across different groups of informal workers, and how do education level, vocational training days, and credit accessibility affect income?
+## Insights
+
+The density plot displays highly overlapping curves, suggesting that the probability distribution of GPA remains largely consistent regardless of gender. Both groups peak mainly at the "Fair" level. However, the female peak is sharper and higher, indicating a stronger concentration of students within the "Fair" tier, whereas the male distribution appears slightly flatter. The box plot further supports this, as the median lines for both genders positioned identically at the "Fair" level
+
+Both the density and box plots suggest that the overall distribution of learning outcomes is similar between genders. Although [Table 4](https://www.sciencedirect.com/science/article/pii/S2352340925001702#tbl0004) indicates that gender has a statistically significant impact on GPA (p = .009), the density plot shows that this difference is not drastic. The significance could be related to variations in the proportions of students at specific levels, such as the "Fair" and "Good" categories.
+
+# EDA 3: Comparison of student activities duration
+
+## Methods
+
+To reflect the duration of student activities, in the ridgeline plot, the intensity levels is converted to specific hourly intervals and applied a smoothing bandwidth by setting `bandwidth = 0.5` . This visualization allows for a clear comparison of daily time allocation among different usage.
+
 ```{r}
+time_data <- survey_data %>%
+  select(Time_Studying, Time_Friends, Time_SocicalMedia) %>%
+  mutate(across(everything(), as.numeric)) %>% 
+  pivot_longer(
+    cols = everything(),
+    names_to = "Activity",
+    values_to = "Time_Level"
+  ) %>%
+  mutate(
+    Activity = case_when(
+      Activity == "Time_Studying" ~ "Studying",
+      Activity == "Time_Friends" ~ "With Friends",
+      Activity == "Time_SocicalMedia" ~ "Social Media"
+    )
+  )
 
+ggplot(time_data, 
+       aes(x = Time_Level, 
+           y = Activity, 
+           fill = factor(after_stat(quantile)))) +
+  stat_density_ridges(
+    geom = "density_ridges_gradient",
+    calc_ecdf = TRUE, 
+    quantiles = 4,
+    quantile_lines = TRUE,
+    scale = 0.9,
+    bandwidth = 0.5 
+  ) +
+  scale_x_continuous(
+    breaks = 1:5,
+    labels = c("Under 1h", "1-2h", "2-3h", "3-4h", "Over 4h")
+  ) +
+  scale_fill_viridis_d(name = "Quartiles", alpha = 0.8) +
+  labs(
+    title = "Time Allocation: Academic vs. Social Activities",
+    subtitle = "Comparing daily hours spent on studying, friends, and social media",
+    x = "Intensity Level",
+    y = "" 
+  ) +
+  theme_minimal() +
+  theme(
+    plot.title = element_text(size = 12, face = "bold", hjust = 0.5),
+    plot.subtitle = element_text(size = 9, hjust = 0.5),
+    axis.title = element_text(size = 8),
+    axis.text = element_text(size = 7),
+    legend.title = element_text(size = 8),
+    legend.text = element_text(size = 7)
+  )
 ```
 
+## Insights
 
-# EDA 2
+The ridgeline plot reveals a sharp contrast in how students manage their daily schedules. "Studying" shows a heavy concentration at the highest intensity level (Over 4h), where the quartiles are so densely clustered that Quartiles 2 and 3 are nearly invisible. This lack of visual separation suggests extreme academic intensity.
+
+Besides, "Social Media" and "Friends" display broader distributions centered around moderate levels (typically between 1 and 3 hours). These social activities show a more balanced spread across the middle quartiles, suggesting that while students do maintain a social life, it is clearly secondary priority to their studies.
+
+This commitment to studying is consistent with the high GPA levels observed in the previous analysis. The data confirms that for this student body, academic work is the first priority, with social activities occupying significantly less of their daily time.
+
+# EDA 4: Relationships between family factors and performance
+
+## Methods
+
+To explore how family background shapes academic success, heatmap is built using `geom_tile()` to cross examine GPA against five family variables: parental education, parental occupation, and poverty status. 
+
+By calculating the proportion of students within each group, we can spot the areas of higher concentration through darker color intensities.
 
 ```{r}
+heatmap_data <- survey_data %>%
+  select(GPA, Poor_Stu, Mother_Edu, Father_Edu, Mother_Occupation, Father_Occupation) %>%
+  pivot_longer(cols = -GPA, names_to = "Family_Factor", values_to = "Factor_Value") %>%
+  count(Family_Factor, Factor_Value, GPA) %>%
+  group_by(Family_Factor, Factor_Value) %>%
+  mutate(Proportion = n / sum(n)) %>%
+  ungroup()
+
+heatmap_data$Factor_Value <- factor(heatmap_data$Factor_Value, 
+                                    levels = c("Other", "Primary", "Secondary", "High School", "College", "Uni/Grad", 
+                                               "No", "Yes", 
+                                               "Gov Employee", "Self-employed", "Freelance", "Not public"))
+
+ggplot(heatmap_data, aes(x = Factor_Value, y = GPA, fill = Proportion)) +
+  geom_tile(color = "white") +
+  scale_fill_gradient(low = "white", high = "dodgerblue4", labels = percent_format()) +
+  facet_wrap(~ Family_Factor, scales = "free_x", ncol = 2) +
+  labs(
+    title = "GPA Performance by Family Factors",
+    subtitle = "Heatmap of GPA levels across different family backgrounds",
+    x = "Family Factor Category",
+    y = "GPA Level",
+    fill = "Proportion"
+  ) +
+  theme_minimal() +
+  theme(
+    
+    plot.title = element_text(size = 12, face = "bold", hjust = 0.5),
+    plot.subtitle = element_text(size = 9, hjust = 0.5),
+    axis.text.x = element_text(size = 7, angle = 30, vjust = 1, hjust = 1),
+    axis.text.y = element_text(size = 7),
+    axis.title = element_text(size = 8),
+    strip.text = element_text(size = 7, face = "bold"),
+    legend.position = "right",
+    legend.title = element_text(size = 8),
+    legend.text = element_text(size = 7),
+    panel.spacing = unit(1, "lines")
+  )
 ```
 
+## Insights
 
-# EDA 3
+The heatmap shows that "Fair" and "Good" GPAs are the heavy hitters across almost family backgrounds.
+
+- **Parental Education**: There is a upward shift in color density as we move from Primary to Uni/Grad education. The tiles getting darker in the "Good" and "Excellent" rows for students with highly educated parents. 
+- **Occupation**: For both mother’s and father’s jobs, children of Government Employees and the Self-employed seem to have a much more stable and stronger presence in the higher GPA brackets. 
+- **Poverty Status**: The contrast here is actually quite sharp. Students who aren't from poor backgrounds have a much deeper concentration at the "Good" level, whereas students from poor backgrounds are more spread out across the "Fair" level.
+
+This visualization suggests that while the student body has a strong academic baseline, family and financial factors benefit students in reaching higher performance, and this aligns with the high statistical significance (p = .000) for parental education/occupation that's observed in [Table 4](https://www.sciencedirect.com/science/article/pii/S2352340925001702#tbl0004).
+
+# EDA 5: Comparisons between perceptive dimensions
+
+## Methods
+
+To look at how students actually perceive their university environment across nine different dimensions, mean scores and 95% confidence intervals is calculated for each category to see where the university excels and where students feel there’s room for improvement. The results are plotted in a comparison chart, sorted from highest to lowest rating.
 
 ```{r}
+perception_data <- survey_data %>%
+  select(Adapt_Learning_Uni, Study_Methods, SupportOf_Uni, SupportOf_Lec, 
+         Facilitie_Uni, Quality_Lecturer, TrainingCurriculum, 
+         Competitive_Class, InfluenceF_Friends) %>%
+  mutate(across(everything(), as.numeric)) %>%
+  pivot_longer(cols = everything(), names_to = "Dimension", values_to = "Score") %>%
+  group_by(Dimension) %>%
+  summarise(
+    mean_score = mean(Score, na.rm = TRUE),
+    se = sd(Score, na.rm = TRUE) / sqrt(n()),
+    .groups = 'drop'
+  ) %>%
+  mutate(Dimension = reorder(Dimension, mean_score))
+
+ggplot(perception_data, aes(x = Dimension, y = mean_score)) +
+  geom_point(size = 3, color = "steelblue") +
+  geom_errorbar(aes(ymin = mean_score - 1.96 * se, ymax = mean_score + 1.96 * se), 
+                width = 0.2, color = "steelblue") +
+  coord_flip() +
+  labs(
+    title = "Perception Scores Across University Dimensions",
+    subtitle = "Mean scores with 95% confidence intervals (Scale 1-5)",
+    x = "",
+    y = "Average Rating"
+  ) +
+  theme_minimal() +
+  theme(
+    plot.title = element_text(size = 12, face = "bold", hjust = 0.5),
+    plot.subtitle = element_text(size = 9, hjust = 0.5),
+    axis.text.y = element_text(size = 7),
+    axis.text.x = element_text(size = 7),
+    axis.title = element_text(size = 8),
+    panel.grid.minor = element_blank()
+  )
+
 ```
 
+## Insight
 
-# EDA 4
+Quality_Lecturer has the highest ratings, showing students have high confidence in the teaching staff. SupportOf_Lec and TrainingCurriculum also have very high scores, highlighting strong academic structural support. On the other hand, Adapt_Learning_Uni and Study_Methods are have the low scores, this suggests that students are quite struggling with adapting to the university learning style. 
 
-```{r}
-```
-
-
-# EDA 5
-
-```{r}
-```
-
+To conclude, high GPAs we found earlier could be directly supported by the high scored Quality_Lecturer and TrainingCurriculum. The university provides a great academic environment that help students succeed, even though students find the adaptability a bit tough.
 
 # Summary and conclusion
 
+In this project, we cleaned and visualized data to see how academic performance is associated with demographic factors, family background, and student perceptions. 
+
+The results show that these high GPA levels are highly related to a high pressure study environment and specific socioeconomic advantages: 
+
+- Both female and male students have a similar performance distribution which falls under the "Fair" and "Good" levels, with females having a tighter concentration in the "Good" and "Excellent" categories compared to males. 
+- Students are focused on study. As most of them spend over 4 hours a day studying, which is far more than the time they spend on social media or with friends. 
+- Family background is a huge performance booster for students' performance. Students with highly educated parents (Uni/Grad) or those in stable professions (Gov Employees/Self-employed) consistently hit the highest GPA tiers. 
+- The university’s top assets are lecturer quality and curriculum, as both earned high ratings from the student survey. This strong support system is the backbone of student success.
+
+To wrap up with some recommendations, since this project focused mostly on the visuals, it's important to note that the data currently only shows correlations. We can't definitively prove a direct cause and effect relationship between family background or time management and GPA just yet. To really back up what we’re seeing in the heatmaps and boxplots, we should use formal statistical tests to confirm the strength of these relationships. 
+
+It would be great to dig into some other factors we didn't cover here, like mental health or specific study techniques, just to get a fuller picture of what’s actually driving success.
+
 # References
 
+- [Dataset about VNU students, Code Book](https://data.mendeley.com/datasets/23ppcdbmhc/1) 
+- [Table 1. Distribution of responses by questions about Group A - students' demographics in the dataset.](https://www.sciencedirect.com/science/article/pii/S2352340925001702#tbl0001) 
+- [Table 3. Distribution of responses by question about participants’ grade point average (GPA)](https://www.sciencedirect.com/science/article/pii/S2352340925001702#tbl0003) 
+- [Table 4. Correlations among Group A and students’ outcomes (GPA)](https://www.sciencedirect.com/science/article/pii/S2352340925001702#tbl0004) 
+- [Table 7. Ordinal regression results](https://www.sciencedirect.com/science/article/pii/S2352340925001702#tbl0007)
