@@ -24,7 +24,7 @@ website:
     - text: "Take-home Exercise"
       menu:
       - text: "Take-home Exercise 1"
-        href: "TakeHomeExervise1.html"
+        href: "TakeHomeExercise1.html"
     right:
       - href: index.qmd
         text: Home
