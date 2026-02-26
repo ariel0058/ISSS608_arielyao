@@ -1,0 +1,12 @@
+name: ShinyDemo
+title: ShinyDemo
+username: ariel0058
+account: ariel0058
+server: shinyapps.io
+hostUrl: https://api.shinyapps.io/v1
+appId: 16729701
+bundleId: 11610436
+url: https://ariel0058.shinyapps.io/ShinyDemo/
+version: 1
+asMultiple: FALSE
+asStatic: FALSE
