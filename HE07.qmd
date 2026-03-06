@@ -144,7 +144,6 @@ ggplot() +
 
 ```
 
-
 ```{r}
 library(CGPfunctions)
 rice <- read_csv("data/rice.csv", show_col_types = FALSE)
