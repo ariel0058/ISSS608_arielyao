@@ -1,0 +1,151 @@
+---
+title: "TakeHomeExercise2"
+author: "Yao Yao"
+date: "March 8, 2026"
+date-modified: "last-modified" 
+execute: 
+  eval: true
+  echo: true
+  warning: false
+  freeze: true
+---
+
+# Prototyping Module for Visual Analytics Shiny Application
+
+## Introduction - Fintech Customer Behaviors in Colombia
+Our project dives into the Latin American fintech to understand what drives customer behavior. 
+
+
+In this prototype, I'm using Latent Class Analysis (LCA) to group customers into meaningful personas based on customer behaviors. Users should be able to actively interact with the clustering model, like adjust the number of groups or change the model’s repetitions to see how the customer segments shift. The goal is to let analysts explore their own assumptions about which customers are most loyal and which ones are on the verge of leaving the platform.
+
+## The Dataset
+We’re using the COFINFAD dataset, which covers 48,723 customers from a major Colombian fintech firm. What makes this data special is that it combines information from different dimensions:
+- Demographics: Basic profiles like age, income, and location.
+- Product Usage: Which services they use, such as credit cards, loans, or insurance.
+- Digital Engagement: How often they log in and which app features they use.
+- Attitudinal Data: Rare metrics like NPS and satisfaction scores.
+
+By using the customer_data.csv file, we have access to 57 variables per user. This allows our clustering model to look at a customer's entire digital and financial footprint, helping us distinguish between different groups—like "power users" versus "casual spenders".
+
+## Setting the Analytical Tools for Data Wrangling
+
+We load the R packages using the `pacman::p_load()` function:
+
+```{r}
+pacman::p_load(haven, tidyverse, 
+               janitor, reshape2,
+               DT, kableExtra, lubridate)
+```
+
+## Data Wrangling
+
+### Data source
+
+The dataset used in the exercise is behavioral and transactional data retrieved from 48,723 customers of a Colombian fintech company, collected over 12 months from January 4, 2023, to December 29, 2023. The data is from [COFINFAD: Colombian Fintech Financial Analytics Dataset](https://data.mendeley.com/datasets/mhb4zn3258/1)
+
+For this project, we are specifically using the `customer_data.csv` file, which aggregates 54 variables into a single record per user that's proper for LCA clustering. The raw `transactions_data.csv` (transaction level logs) will not be used. 
+
+### Import data
+First, we import `customer_data.csv` dataset as `customer_raw_data`.
+
+
+```{r}
+customer_raw_data <- read_csv("data/customer_data.csv",show_col_types = FALSE)
+```
+
+### Summary of data
+Checking the data structure in the Environment, the `customer_raw_data` has 48723 rows of 54 variables in different data types.
+
+### Check missing values
+We first need to check the missing values as poLCA is sensitive to missing values. By checking the missing values can we decide whether it's proper to include the data into our analysis or if we need to handle it.
+Before proceeding with the clustering, it is important to check missing values, as Latent Class Analysis (LCA) using poLCA is very sensitive to missing data.
+
+```{r} 
+library(tidyverse)
+
+# Calculate count and percentage of NA values for each column
+missing_summary <- customer_raw_data %>%
+  summarise(across(everything(), ~ sum(is.na(.)))) %>%
+  pivot_longer(everything(), names_to = "variable", values_to = "missing_count") %>%
+  mutate(missing_percentage = (missing_count / nrow(customer_raw_data)) * 100) %>%
+  arrange(desc(missing_count))
+
+# Display variables with missing values
+print(missing_summary)
+```
+As we can see in the result, complaint_topics, credit_utilization_ratio and feature_requests have missing_percentage of 50%, 37.5% and 33.1% which is quite high, we will filter these variables out from our analysis.
+
+The result shows that several variables have high missing_percentage: complaint_topics (50.0%), credit_utilization_ratio (37.5%), and feature_requests (33.1%). We will remove these three variables together with customer_id which doesn't help in clustering, to ensure the stability and reliability of our analysis.
+
+```{r}
+df_filtered <- customer_raw_data %>%
+  select(
+    # Exclude variables with high missing_percentage
+    -complaint_topics, 
+    -credit_utilization_ratio, 
+    -feature_requests,
+    # Exclude identifiers that don't help in clustering
+    -customer_id, 
+    everything() 
+  )
+
+```
+
+### 2. Filtering data/narrowing down for selected variables for our project use
+In this step, we narrow down our dataset to the most relevant variables for clustering. Inspired by the RFM (Recency, Frequency, Monetary) framework, we transform raw date columns into meaningful behavioral metrics to enhance the model's interpretability:
+
+- Tenure (Loyalty): `user_tenure_days` is calculated as `last_tx - first_tx`, representing the total duration of the customer's active relationship with the fintech.
+- Recency (Activity): `days_since_last_tx` is calculated as the number of days between the dataset's cutoff date and the user's `last_transaction_date`. This helps identify churned vs. active users.
+
+High-cardinality geographic data `location` that contains special characters is removed. 
+
+Redundant financial metrics `tx_count`, `avg_tx_value` are removed to prevent multicollinearity, `total_tx_volume`, `monthly_transaction_count`, `average_transaction_value`, `avg_daily_transactionsas` are also removed, as `total_transaction_volume` already serves as customer value. 
+
+We also removed some other fields including `marital_status`, `occupation`, `education_level`, `household_size` to simplify the demographic details which we will not focus in this analysis.
+
+`base_satisfaction`, `tx_satisfaction`, `product_satisfaction`, `app_store_rating` are removed as we already have `satisfaction_score` and `nps_score` 作为综合指标了.
+
+`acquisition_channel`, `resolved_tickets_ratio`, `feedback_sentiment` are removed due to they are more related to operational side but in this analysis we focus more on user value.
+
+`churn_probability` is also removed as 这是测试数据自带的预测结果。如果我们把别人已经分好的类放进聚类模型，会干扰我们自己寻找潜在类别的过程。
+
+
+```{r}
+library(lubridate) # Used for date manipulation
+
+# Assume the study cutoff date as the final day of the dataset (2023-12-29)
+study_cutoff_date <- as.Date("2023-12-29")
+
+df_engineered <- df_filtered %>%
+  # Convert raw character strings into Date objects (format: DD/MM/YYYY)
+  mutate(across(c(first_tx, last_tx, last_transaction_date), 
+                ~ as.Date(., format = "%d/%m/%Y"))) %>%
+  
+  # Calculate User Tenure (Loyalty)
+  mutate(user_tenure_days = as.numeric(last_tx - first_tx)) %>%
+  
+  # Calculate Recency (Activity)
+  mutate(days_since_last_tx = as.numeric(study_cutoff_date - last_transaction_date)) %>%
+  
+  # Select final variables and drop redundant columns
+  select(
+    -marital_status, -occupation, -household_size, -gender, -location,
+    -average_transaction_value, -first_tx, -last_tx, -last_transaction_date, -first_transaction_date, -last_survey_date,    
+    -avg_daily_transactions, -total_tx_volume, -avg_tx_value, -tx_count, -transaction_frequency,
+    -base_satisfaction, -tx_satisfaction, -product_satisfaction, -app_store_rating,
+    -churn_probability, -customer_tenure,
+    -acquisition_channel, -resolved_tickets_ratio, -feedback_sentiment, -support_tickets_count, -failed_transactions, -international_transactions, -weekend_transaction_ratio
+           
+  )
+
+# Verify the updated list of variables
+colnames(df_engineered)
+
+```
+
+
+### Convert data types （包括按照 poLCA 要求将 0/1 转为 1/2，对 age, income_bracket, tx_count, total_transaction_volume 等关键指标进行科学分箱
+
+
+## Cluster Analysis
+

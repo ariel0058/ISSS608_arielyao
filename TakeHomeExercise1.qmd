@@ -66,7 +66,7 @@ We first take a look at the data, and handle data when necessary.
 
 ### Summary of data
 
-Checking the data structure in the Environment, we’ve got 2170 rows and 22 columns, all currently set as double types. 
+Checking the data structure in the Environment, we’ve got 2170 rows and 22 columns, all currently set as double types.
 
 First, we need to slim down the dataset and filter for the specific variables we're studying. For those selected variables, we’ll handle any NA values and convert them into the right data types for analysis. We don't need to worry about checking for duplicates here, since identical survey answers are valid in this survey study.
 
@@ -76,15 +76,15 @@ Next, we want to reduce the size of the dataset to focus on the variables most r
 
 Following the framework used in the original research, we categorized our selection into two groups: **Group A**, which covers objective demographic factors, and **Group B**, which focuses on student perceptions and assessments. This approach provides a comprehensive view of what drives learning outcomes.
 
-Based on the preliminary descriptive and inferential findings from the study, we have selected the following variables: 
+Based on the preliminary descriptive and inferential findings from the study, we have selected the following variables:
 
-- **Group A**: Demographic and Objective Factors 
-    - **GPA**: GPA is the most direct measure of learning outcomes. With 54.8% of students at a "Fair" level and only 4.9% at "Excellent," the distribution is slightly skewed. 
-    - **Gender**: Since the sample is 88.9% female, we want to investigate if this gender imbalance correlates with academic performance. 
-    - **Time Management**: The data shows high academic engagement, with 82.2% of students studying for more than 8 hours daily. We want to compare how time spent on studies versus social media and social life. 
-    - **Family Background**: Significant correlations were found between parental occupation and GPA. We will examine how parental education, occupation types, and economic status (poverty level) impact success.
-- **Group B**: Student Perceptions and Assessments
-    - **Learning Dimensions**: Initial scores show that "Quality of Lecturers" is highly rated, while "Environment Adaptation" is significantly lower. This suggests that while teaching is strong, students still face hurdles in adjusting to university life. We will analyze the distribution across all nine perception dimensions.
+-   **Group A**: Demographic and Objective Factors
+    -   **GPA**: GPA is the most direct measure of learning outcomes. With 54.8% of students at a "Fair" level and only 4.9% at "Excellent," the distribution is slightly skewed.
+    -   **Gender**: Since the sample is 88.9% female, we want to investigate if this gender imbalance correlates with academic performance.
+    -   **Time Management**: The data shows high academic engagement, with 82.2% of students studying for more than 8 hours daily. We want to compare how time spent on studies versus social media and social life.
+    -   **Family Background**: Significant correlations were found between parental occupation and GPA. We will examine how parental education, occupation types, and economic status (poverty level) impact success.
+-   **Group B**: Student Perceptions and Assessments
+    -   **Learning Dimensions**: Initial scores show that "Quality of Lecturers" is highly rated, while "Environment Adaptation" is significantly lower. This suggests that while teaching is strong, students still face hurdles in adjusting to university life. We will analyze the distribution across all nine perception dimensions.
 
 | Variable Name | Type | Description |
 |:-----------------------|:-----------------------|:-----------------------|
@@ -112,7 +112,7 @@ survey_data <- survey_raw_data %>%
 
 ### Convert data types
 
-From our previous step, we identified that the variables primarily fall into two categories: Categorical Ordered and Nominal. 
+From our previous step, we identified that the variables primarily fall into two categories: Categorical Ordered and Nominal.
 
 For the Categorical Ordered variables, the numerical values represent specific levels of intensity or rank. To preserve this hierarchy, we will convert them into Ordered Factors and define their respective levels to lock in the logical progression.
 
@@ -120,8 +120,8 @@ For the Categorical Ordered variables, the numerical values represent specific l
 
 -   **Nominal:** Gender, Poor_Stu, Mother_Occupation, Father_Occupation
 
-
 For the Categorical Ordered variables, the numerical values represent specific levels of intensity or rank. To preserve this hierarchy, we will convert them into Ordered Factors and define their respective levels to lock in the logical progression.
+
 ```{r}
 survey_data <- survey_data %>%
   mutate(
@@ -245,9 +245,9 @@ gpa_distribution
 
 ## Insights
 
-The boxplot and bar chart suggest a negatively skewed distribution of learning outcome among students. The bar chart highlights majority of the student population is in the middle high achievement areas, with the "Fair" category accounting for the largest proportion at 54.8%, followed by "Good" at 31.9%. Only a small portion of students fall into the "Poor" (3.4%) or "Excellent" (4.9%) categories. 
+The boxplot and bar chart suggest a negatively skewed distribution of learning outcome among students. The bar chart highlights majority of the student population is in the middle high achievement areas, with the "Fair" category accounting for the largest proportion at 54.8%, followed by "Good" at 31.9%. Only a small portion of students fall into the "Poor" (3.4%) or "Excellent" (4.9%) categories.
 
-This trend is further supported by the boxplot, as the median and the mean both sit within the "Fair" range. The presence of an outlier at "Poor" level suggests a distinct minority still struggles. 
+This trend is further supported by the boxplot, as the median and the mean both sit within the "Fair" range. The presence of an outlier at "Poor" level suggests a distinct minority still struggles.
 
 This suggests that the university's academic environment successfully supports most students in achieving "Fair" or "Good" levels, but reaching the "Excellent" still remains a challenge.
 
@@ -369,7 +369,7 @@ This commitment to studying is consistent with the high GPA levels observed in t
 
 ## Methods
 
-To explore how family background shapes academic success, heatmap is built using `geom_tile()` to cross examine GPA against five family variables: parental education, parental occupation, and poverty status. 
+To explore how family background shapes academic success, heatmap is built using `geom_tile()` to cross examine GPA against five family variables: parental education, parental occupation, and poverty status.
 
 By calculating the proportion of students within each group, we can spot the areas of higher concentration through darker color intensities.
 
@@ -418,9 +418,9 @@ ggplot(heatmap_data, aes(x = Factor_Value, y = GPA, fill = Proportion)) +
 
 The heatmap shows that "Fair" and "Good" GPAs are the heavy hitters across almost family backgrounds.
 
-- **Parental Education**: There is a upward shift in color density as we move from Primary to Uni/Grad education. The tiles getting darker in the "Good" and "Excellent" rows for students with highly educated parents. 
-- **Occupation**: For both mother’s and father’s jobs, children of Government Employees and the Self-employed seem to have a much more stable and stronger presence in the higher GPA brackets. 
-- **Poverty Status**: The contrast here is actually quite sharp. Students who aren't from poor backgrounds have a much deeper concentration at the "Good" level, whereas students from poor backgrounds are more spread out across the "Fair" level.
+-   **Parental Education**: There is a upward shift in color density as we move from Primary to Uni/Grad education. The tiles getting darker in the "Good" and "Excellent" rows for students with highly educated parents.
+-   **Occupation**: For both mother’s and father’s jobs, children of Government Employees and the Self-employed seem to have a much more stable and stronger presence in the higher GPA brackets.
+-   **Poverty Status**: The contrast here is actually quite sharp. Students who aren't from poor backgrounds have a much deeper concentration at the "Good" level, whereas students from poor backgrounds are more spread out across the "Fair" level.
 
 This visualization suggests that while the student body has a strong academic baseline, family and financial factors benefit students in reaching higher performance, and this aligns with the high statistical significance (p = .000) for parental education/occupation that's observed in [Table 4](https://www.sciencedirect.com/science/article/pii/S2352340925001702#tbl0004).
 
@@ -470,29 +470,29 @@ ggplot(perception_data, aes(x = Dimension, y = mean_score)) +
 
 ## Insight
 
-Quality_Lecturer has the highest ratings, showing students have high confidence in the teaching staff. SupportOf_Lec and TrainingCurriculum also have very high scores, highlighting strong academic structural support. On the other hand, Adapt_Learning_Uni and Study_Methods are have the low scores, this suggests that students are quite struggling with adapting to the university learning style. 
+Quality_Lecturer has the highest ratings, showing students have high confidence in the teaching staff. SupportOf_Lec and TrainingCurriculum also have very high scores, highlighting strong academic structural support. On the other hand, Adapt_Learning_Uni and Study_Methods are have the low scores, this suggests that students are quite struggling with adapting to the university learning style.
 
 To conclude, high GPAs we found earlier could be directly supported by the high scored Quality_Lecturer and TrainingCurriculum. The university provides a great academic environment that help students succeed, even though students find the adaptability a bit tough.
 
 # Summary and conclusion
 
-In this project, we cleaned and visualized data to see how academic performance is associated with demographic factors, family background, and student perceptions. 
+In this project, we cleaned and visualized data to see how academic performance is associated with demographic factors, family background, and student perceptions.
 
-The results show that these high GPA levels are highly related to a high pressure study environment and specific socioeconomic advantages: 
+The results show that these high GPA levels are highly related to a high pressure study environment and specific socioeconomic advantages:
 
-- Both female and male students have a similar performance distribution which falls under the "Fair" and "Good" levels, with females having a tighter concentration in the "Good" and "Excellent" categories compared to males. 
-- Students are focused on study. As most of them spend over 4 hours a day studying, which is far more than the time they spend on social media or with friends. 
-- Family background is a huge performance booster for students' performance. Students with highly educated parents (Uni/Grad) or those in stable professions (Gov Employees/Self-employed) consistently hit the highest GPA tiers. 
-- The university’s top assets are lecturer quality and curriculum, as both earned high ratings from the student survey. This strong support system is the backbone of student success.
+-   Both female and male students have a similar performance distribution which falls under the "Fair" and "Good" levels, with females having a tighter concentration in the "Good" and "Excellent" categories compared to males.
+-   Students are focused on study. As most of them spend over 4 hours a day studying, which is far more than the time they spend on social media or with friends.
+-   Family background is a huge performance booster for students' performance. Students with highly educated parents (Uni/Grad) or those in stable professions (Gov Employees/Self-employed) consistently hit the highest GPA tiers.
+-   The university’s top assets are lecturer quality and curriculum, as both earned high ratings from the student survey. This strong support system is the backbone of student success.
 
-To wrap up with some recommendations, since this project focused mostly on the visuals, it's important to note that the data currently only shows correlations. We can't definitively prove a direct cause and effect relationship between family background or time management and GPA just yet. To really back up what we’re seeing in the heatmaps and boxplots, we should use formal statistical tests to confirm the strength of these relationships. 
+To wrap up with some recommendations, since this project focused mostly on the visuals, it's important to note that the data currently only shows correlations. We can't definitively prove a direct cause and effect relationship between family background or time management and GPA just yet. To really back up what we’re seeing in the heatmaps and boxplots, we should use formal statistical tests to confirm the strength of these relationships.
 
 It would be great to dig into some other factors we didn't cover here, like mental health or specific study techniques, just to get a fuller picture of what’s actually driving success.
 
 # References
 
-- [Dataset about VNU students, Code Book](https://data.mendeley.com/datasets/23ppcdbmhc/1) 
-- [Table 1. Distribution of responses by questions about Group A - students' demographics in the dataset.](https://www.sciencedirect.com/science/article/pii/S2352340925001702#tbl0001) 
-- [Table 3. Distribution of responses by question about participants’ grade point average (GPA)](https://www.sciencedirect.com/science/article/pii/S2352340925001702#tbl0003) 
-- [Table 4. Correlations among Group A and students’ outcomes (GPA)](https://www.sciencedirect.com/science/article/pii/S2352340925001702#tbl0004) 
-- [Table 7. Ordinal regression results](https://www.sciencedirect.com/science/article/pii/S2352340925001702#tbl0007)
+-   [Dataset about VNU students, Code Book](https://data.mendeley.com/datasets/23ppcdbmhc/1)
+-   [Table 1. Distribution of responses by questions about Group A - students' demographics in the dataset.](https://www.sciencedirect.com/science/article/pii/S2352340925001702#tbl0001)
+-   [Table 3. Distribution of responses by question about participants’ grade point average (GPA)](https://www.sciencedirect.com/science/article/pii/S2352340925001702#tbl0003)
+-   [Table 4. Correlations among Group A and students’ outcomes (GPA)](https://www.sciencedirect.com/science/article/pii/S2352340925001702#tbl0004)
+-   [Table 7. Ordinal regression results](https://www.sciencedirect.com/science/article/pii/S2352340925001702#tbl0007)
