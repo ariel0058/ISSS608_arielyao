@@ -13,11 +13,13 @@ execute:
 # Overview
 
 ## Introduction to Prototyping Module for Visual Analytics Shiny Application
-Our project dives into the Latin American fintech to understand what drives customer behavior. 
+
+Our project dives into the Latin American fintech to understand what drives customer behavior.
 
 In this prototype, I'm using Latent Class Analysis (LCA) to group customers into meaningful personas based on customer behaviors. Users should be able to actively interact with the clustering model, like select their interested indicators or adjust the number of cluster groups to see how the customer segments shift. The goal is to let analysts explore their own assumptions about which customers are most loyal, valuable and which ones are on the verge of leaving the platform.
 
 ## The Dataset
+
 We’re using the COFINFAD dataset, which covers 48,723 customers from a major Colombian fintech firm. What makes this data special is that it combines information from different dimensions:
 
 -   Demographics: Basic profiles like age, income, and location.
@@ -28,6 +30,7 @@ We’re using the COFINFAD dataset, which covers 48,723 customers from a major C
 By using the customer_data.csv file, we have access to 57 variables per user. This allows our clustering model to look at a customer's entire digital and financial footprint, helping us distinguish between different groups, like "power users" versus "casual spenders".
 
 # Getting Started
+
 ## Setting the Analytical Tools for Data Wrangling
 
 We load the R packages using the `pacman::p_load()` function:
@@ -39,12 +42,15 @@ pacman::p_load(haven, tidyverse,
 ```
 
 ## Data Wrangling
+
 ### Data Source
+
 The dataset used in the exercise is behavioral and transactional data retrieved from 48,723 customers of a Colombian fintech company, collected over 12 months from January 4, 2023, to December 29, 2023. The data is from [COFINFAD: Colombian Fintech Financial Analytics Dataset](https://data.mendeley.com/datasets/mhb4zn3258/1)
 
-For this project, we are specifically using the `customer_data.csv` file, which aggregates 54 variables into a single record per user that's proper for LCA clustering. The raw `transactions_data.csv` (transaction level logs) will not be used. 
+For this project, we are specifically using the `customer_data.csv` file, which aggregates 54 variables into a single record per user that's proper for LCA clustering. The raw `transactions_data.csv` (transaction level logs) will not be used.
 
 ### Import Data
+
 First, we import `customer_data.csv` dataset as `customer_raw_data`.
 
 ```{r}
@@ -52,12 +58,14 @@ customer_raw_data <- read_csv("data/customer_data.csv",show_col_types = FALSE)
 ```
 
 ### Summary of Data
+
 Checking the data structure in the Environment, the `customer_raw_data` has 48723 rows of 54 variables in different data types.
 
 ### Check Missing Values
+
 We first need to check the missing values as poLCA is sensitive to missing values. By checking the missing values we can decide whether to use the data or just drop it.
 
-```{r} 
+```{r}
 library(tidyverse)
 
 # Calculate count and percentage of NA values for each column
@@ -70,6 +78,7 @@ missing_summary <- customer_raw_data %>%
 # Display variables with missing values
 print(missing_summary)
 ```
+
 As shown in result, `complaint_topics`, `credit_utilization_ratio` and `feature_requests` have quite high missing_percentage of 50%, 37.5% and 33.1%, we will remove these three variables together with `customer_id` which doesn't help in clustering to ensure the stability and reliability of our analysis.
 
 ```{r}
@@ -87,17 +96,18 @@ df_filtered <- customer_raw_data %>%
 ```
 
 ### Narrow Down Variables
+
 In this step, we narrow down our dataset to the most relevant variables for clustering. Inspired by the RFM (Recency, Frequency, Monetary) framework, we transform raw date columns into meaningful behavioral metrics to enhance the model's interpretability:
 
-- Tenure (Loyalty): Created `user_tenure_days` (last vs. first transaction) to measure relationship length.
-- Recency (Activity): Created `days_since_last_tx` to separate active users from churned ones.
+-   Tenure (Loyalty): Created `user_tenure_days` (last vs. first transaction) to measure relationship length.
+-   Recency (Activity): Created `days_since_last_tx` to separate active users from churned ones.
 
 Key Filters Applied:
 
-- Reduce Noise: Dropped `location` and granular demographics like `marital_status` or `occupation` to keep the model focused on financial behavior.
-- Eliminate Redundancy: Removed values such as `tx_count` and `avg_tx_value` to prevent multicollinearity, keeping `total_transaction_volume` to capture historical contribution, `customer_lifetime_value` to account for future profitability, `transaction_frequency` as a measure of user engagement.
-- Consolidate Sentiment: Used `satisfaction_score` and `nps_score` as primary metrics, dropping detailed sub-scores like `app_store_rating`.
-- Avoid Bias: Removed `customer_tenure` and other pre-existing predictions to ensure our LCA model discovers unbiased patterns.
+-   Reduce Noise: Dropped `location` and granular demographics like `marital_status` or `occupation` to keep the model focused on financial behavior.
+-   Eliminate Redundancy: Removed values such as `tx_count` and `avg_tx_value` to prevent multicollinearity, keeping `total_transaction_volume` to capture historical contribution, `customer_lifetime_value` to account for future profitability, `transaction_frequency` as a measure of user engagement.
+-   Consolidate Sentiment: Used `satisfaction_score` and `nps_score` as primary metrics, dropping detailed sub-scores like `app_store_rating`.
+-   Avoid Bias: Removed `customer_tenure` and other pre-existing predictions to ensure our LCA model discovers unbiased patterns.
 
 ```{r}
 library(lubridate) # Used for date manipulation
@@ -128,6 +138,7 @@ colnames(df_engineered)
 ```
 
 ### Check Data Types
+
 We first need to evaluate the selected variables to understand their current formats and value ranges. This assessment ensures that our transformation logic accurately aligns with the data distribution and business context.
 
 ```{r}
@@ -158,13 +169,14 @@ df_inspection <- df_engineered %>%
 
 print(df_inspection, n = Inf)
 ```
+
 ### Convert Data Types
+
 To prepare for poLCA cluster analysis, the raw data was restructured into a categorical format optimized for behavioral segmentation. Also all features were coerced into positive integers ($1, 2, 3...$) then transferred to factors, and rows with missing values were removed, to meet the strict requirements of the poLCA algorithm.
 
-- Custom Binning: High-variance metrics like total_transaction_volume and customer_lifetime_value were binned using fixed business thresholds (e.g., $<100M$, $100M-1B$, $>1B$) to better isolate "Whale" users from the mass market.
-- Lifecycle Tiers: Engagement variables (transaction_frequency, days_since_last_tx, user_tenure_days) were grouped into stages (e.g., Active, At Risk, Loyal) to capture user stickiness.
-- Fixed Mapping: Qualitative variables (acquisition_channel, customer_segment) were converted to factors with set levels to ensure consistent numeric encoding.
-
+-   Custom Binning: High-variance metrics like total_transaction_volume and customer_lifetime_value were binned using fixed business thresholds (e.g., $<100M$, $100M-1B$, $>1B$) to better isolate "Whale" users from the mass market.
+-   Lifecycle Tiers: Engagement variables (transaction_frequency, days_since_last_tx, user_tenure_days) were grouped into stages (e.g., Active, At Risk, Loyal) to capture user stickiness.
+-   Fixed Mapping: Qualitative variables (acquisition_channel, customer_segment) were converted to factors with set levels to ensure consistent numeric encoding.
 
 ```{r}
 
@@ -274,8 +286,7 @@ cat("Processed dataset size (LCA Final): ", nrow(df_lca_final), "\n")
 
 ### Latent Class Analysis
 
-LCA is chosen because it is a probability-based method specifically designed for categorical data. While traditional methods like K-Means rely on physical distance between numerical points, LCA identifies hidden segments based on the likelihood of shared behavioral and demographic patterns. 
-This makes it the most effective tool for our dataset, as it allows us to group customers into distinct, actionable categories that align with business logic.
+LCA is chosen because it is a probability-based method specifically designed for categorical data. While traditional methods like K-Means rely on physical distance between numerical points, LCA identifies hidden segments based on the likelihood of shared behavioral and demographic patterns. This makes it the most effective tool for our dataset, as it allows us to group customers into distinct, actionable categories that align with business logic.
 
 ```{r}
 library(poLCA)
@@ -299,7 +310,9 @@ lapply(df_labeled, levels)
 ```
 
 ### Predicted cluster distribution
+
 This section visualizes the relative size of each identified customer groups.
+
 ```{r}
 library(ggplot2)
 library(dplyr)
@@ -339,14 +352,13 @@ ggplot(prop_data, aes(x = 2, y = Percentage, fill = ID)) +
   )
 ```
 
-
-
 ### Assess AIC, BIC, Entropy
+
 To ensure the statistical validity of the model, we assess key metrics AIC, BIC, and Entropy.
 
-- AIC & BIC (Information Criteria): These metrics evaluate the balance between model fit and complexity. Lower values generally indicate a more optimal model that explains the data well without overfitting.
+-   AIC & BIC (Information Criteria): These metrics evaluate the balance between model fit and complexity. Lower values generally indicate a more optimal model that explains the data well without overfitting.
 
-- Entropy: This measures classification precision. It indicates how distinctly the model separates individuals into clusters. Values range from 0 to 1, where higher score represents high certainty and minimal overlap between groups.
+-   Entropy: This measures classification precision. It indicates how distinctly the model separates individuals into clusters. Values range from 0 to 1, where higher score represents high certainty and minimal overlap between groups.
 
 ```{r}
 calculate_entropy <- function(model) {
@@ -365,16 +377,17 @@ entropy_val <- calculate_entropy(LCA_6)
 cat("AIC:", LCA_6$aic, " | BIC:", LCA_6$bic, " | Entropy:", entropy_val, "\n")
 ```
 
-
 ## Customer Profile Visualization
+
 To interpret and visualize the different classes of the LCA model, we come out with heat map and stacked bar chart to map cluster assignments against behavioral and demographic indicators.
 
 ### Feature Intensity Heatmap
-The heatmap provides a visual comparison of how each cluster performs across key metrics. 
 
-- Logic: To compare clusters, we convert categorical labels into numerical ranks and calculate the mean "level" for each group. Because these raw averages often fall into narrow ranges, subtle differences can be difficult to see on a standard scale. We apply 0-1 scaling to magnify the relative performance and highlights the difference.
-- Layout: The X-axis follows the order of selected variables (priority indicators), while the Y-axis (Clusters) is sorted by a selected metric, such as churn_probability, to create a clear value-based hierarchy.
-- Interpretation: Darker blue represents a higher concentration of "top-tier" traits, such as higher spending, longer tenure, or greater satisfaction.
+The heatmap provides a visual comparison of how each cluster performs across key metrics.
+
+-   Logic: To compare clusters, we convert categorical labels into numerical ranks and calculate the mean "level" for each group. Because these raw averages often fall into narrow ranges, subtle differences can be difficult to see on a standard scale. We apply 0-1 scaling to magnify the relative performance and highlights the difference.
+-   Layout: The X-axis follows the order of selected variables (priority indicators), while the Y-axis (Clusters) is sorted by a selected metric, such as churn_probability, to create a clear value-based hierarchy.
+-   Interpretation: Darker blue represents a higher concentration of "top-tier" traits, such as higher spending, longer tenure, or greater satisfaction.
 
 ```{r}
 # ==============================================================================
@@ -438,9 +451,10 @@ ggplot(heatmap_data, aes(x = Variable, y = cluster, fill = Intensity)) +
 ```
 
 ### Segment Composition Bar Chart
+
 To examine the internal distribution of specific variables, we used 100% stacked bar charts.
 
-- Logic: A custom R function generates distributions for any selected variable (e.g., NPS or Income), identifying the exact proportions of customer types within each segment.
+-   Logic: A custom R function generates distributions for any selected variable (e.g., NPS or Income), identifying the exact proportions of customer types within each segment.
 
 ```{r}
 # ==============================================================================
@@ -475,6 +489,33 @@ print(p_income)
 ggplotly(p_nps)
 ```
 
+## Shiny UI Design
 
+My UI design for the Shiny Application will include one Configuration Panel and 4 Visualization Tabs (Cluster Proportions, Customer Profiles, Variable View, Summary View). 
 
+All the UI interaction happens in the Configuration Panel. The workflow starts when users define their model parameters. Upon clicking Run Model, the system processes the Latent Class Analysis and dynamically updates the Visualization Tabs with the latest results.
+
+**Configuration Panel:** 
+
+- **Introduction:** This interactive interface empowers users to customize their Latent Class Analysis (LCA). You can select specific behavioral indicators, define the number of clusters and repetitions, and sort the results by key metrics to uncover clear, actionable patterns. 
+- **UI Component:** Use `selectizeInput(multiple = TRUE)` for multiple indicator selection, use `sliderInput(min = 2, max = 6)` to let users define the number of clusters, use `sliderInput(min = 2, max = 5)` to let user define the number of repetitions, use `selectInput` to allow user sort cluster in defined order, use `actionButton("run_lca", "Run Analysis")` to make the model run when user have values set up.
+
+**Cluster Proportions:** 
+
+- **Introduction:** A donut chart was plotted to show the market share of each segment, helping us understand which group has the dominant share and which group to prioritize for resources allocation.
+  
+  ![Cluster Proportions](images/cluster01.png)
+  
+**Customer Profiles:** 
+
+- **Introduction:** The Intensity Heatmap used in this tab provides a visual comparison of how each cluster performs across key metrics. We convert categorical labels into numerical ranks and calculate the mean "level" for each group. Because these raw averages often fall into narrow ranges, subtle differences can be difficult to see on a standard scale. We apply 0-1 scaling to magnify the relative performance and highlights the difference.
+  
+  ![Cluster Profiles](images/cluster02.png)
+  
+**Variable View & Summary View:** 
+
+- **Introduction:** These two tabs provide segment composition bar chart, which is used to reveal the internal distribution of variables, on an overall look and on a single variable look.
+
+![Variable View](images/cluster03.png)
+![Summary View](images/cluster04.png)
 
