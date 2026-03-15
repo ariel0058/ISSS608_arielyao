@@ -105,7 +105,45 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     "search-label": "Search"
   }
 }</script>
+<link href="site_libs/htmltools-fill-0.5.9/fill.css" rel="stylesheet">
+<script src="site_libs/htmlwidgets-1.6.4/htmlwidgets.js"></script>
+<script src="site_libs/plotly-binding-4.12.0/plotly.js"></script>
+<script src="site_libs/typedarray-0.1/typedarray.min.js"></script>
+<script src="site_libs/jquery-3.5.1/jquery.min.js"></script>
+<link href="site_libs/crosstalk-1.2.2/css/crosstalk.min.css" rel="stylesheet">
+<script src="site_libs/crosstalk-1.2.2/js/crosstalk.min.js"></script>
+<link href="site_libs/plotly-htmlwidgets-css-2.25.2/plotly-htmlwidgets.css" rel="stylesheet">
+<script src="site_libs/plotly-main-2.25.2/plotly-latest.min.js"></script>
 
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN" && texText && texText.data) {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
 
 <link rel="stylesheet" href="styles.css">
 </head>
@@ -218,21 +256,35 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     <h2 id="toc-title">On this page</h2>
    
   <ul>
-  <li><a href="#prototyping-module-for-visual-analytics-shiny-application" id="toc-prototyping-module-for-visual-analytics-shiny-application" class="nav-link active" data-scroll-target="#prototyping-module-for-visual-analytics-shiny-application">Prototyping Module for Visual Analytics Shiny Application</a>
+  <li><a href="#overview" id="toc-overview" class="nav-link active" data-scroll-target="#overview">Overview</a>
   <ul class="collapse">
-  <li><a href="#introduction---fintech-customer-behaviors-in-colombia" id="toc-introduction---fintech-customer-behaviors-in-colombia" class="nav-link" data-scroll-target="#introduction---fintech-customer-behaviors-in-colombia">Introduction - Fintech Customer Behaviors in Colombia</a></li>
+  <li><a href="#introduction-to-prototyping-module-for-visual-analytics-shiny-application" id="toc-introduction-to-prototyping-module-for-visual-analytics-shiny-application" class="nav-link" data-scroll-target="#introduction-to-prototyping-module-for-visual-analytics-shiny-application">Introduction to Prototyping Module for Visual Analytics Shiny Application</a></li>
   <li><a href="#the-dataset" id="toc-the-dataset" class="nav-link" data-scroll-target="#the-dataset">The Dataset</a></li>
+  </ul></li>
+  <li><a href="#getting-started" id="toc-getting-started" class="nav-link" data-scroll-target="#getting-started">Getting Started</a>
+  <ul class="collapse">
   <li><a href="#setting-the-analytical-tools-for-data-wrangling" id="toc-setting-the-analytical-tools-for-data-wrangling" class="nav-link" data-scroll-target="#setting-the-analytical-tools-for-data-wrangling">Setting the Analytical Tools for Data Wrangling</a></li>
   <li><a href="#data-wrangling" id="toc-data-wrangling" class="nav-link" data-scroll-target="#data-wrangling">Data Wrangling</a>
   <ul class="collapse">
-  <li><a href="#data-source" id="toc-data-source" class="nav-link" data-scroll-target="#data-source">Data source</a></li>
-  <li><a href="#import-data" id="toc-import-data" class="nav-link" data-scroll-target="#import-data">Import data</a></li>
-  <li><a href="#summary-of-data" id="toc-summary-of-data" class="nav-link" data-scroll-target="#summary-of-data">Summary of data</a></li>
-  <li><a href="#check-missing-values" id="toc-check-missing-values" class="nav-link" data-scroll-target="#check-missing-values">Check missing values</a></li>
-  <li><a href="#filtering-datanarrowing-down-for-selected-variables-for-our-project-use" id="toc-filtering-datanarrowing-down-for-selected-variables-for-our-project-use" class="nav-link" data-scroll-target="#filtering-datanarrowing-down-for-selected-variables-for-our-project-use">2. Filtering data/narrowing down for selected variables for our project use</a></li>
-  <li><a href="#convert-data-types-包括按照-polca-要求将-01-转为-12对-age-income_bracket-tx_count-total_transaction_volume-等关键指标进行科学分箱" id="toc-convert-data-types-包括按照-polca-要求将-01-转为-12对-age-income_bracket-tx_count-total_transaction_volume-等关键指标进行科学分箱" class="nav-link" data-scroll-target="#convert-data-types-包括按照-polca-要求将-01-转为-12对-age-income_bracket-tx_count-total_transaction_volume-等关键指标进行科学分箱">Convert data types （包括按照 poLCA 要求将 0/1 转为 1/2，对 age, income_bracket, tx_count, total_transaction_volume 等关键指标进行科学分箱</a></li>
+  <li><a href="#data-source" id="toc-data-source" class="nav-link" data-scroll-target="#data-source">Data Source</a></li>
+  <li><a href="#import-data" id="toc-import-data" class="nav-link" data-scroll-target="#import-data">Import Data</a></li>
+  <li><a href="#summary-of-data" id="toc-summary-of-data" class="nav-link" data-scroll-target="#summary-of-data">Summary of Data</a></li>
+  <li><a href="#check-missing-values" id="toc-check-missing-values" class="nav-link" data-scroll-target="#check-missing-values">Check Missing Values</a></li>
+  <li><a href="#narrow-down-variables" id="toc-narrow-down-variables" class="nav-link" data-scroll-target="#narrow-down-variables">Narrow Down Variables</a></li>
+  <li><a href="#check-data-types" id="toc-check-data-types" class="nav-link" data-scroll-target="#check-data-types">Check Data Types</a></li>
+  <li><a href="#convert-data-types" id="toc-convert-data-types" class="nav-link" data-scroll-target="#convert-data-types">Convert Data Types</a></li>
   </ul></li>
-  <li><a href="#cluster-analysis" id="toc-cluster-analysis" class="nav-link" data-scroll-target="#cluster-analysis">Cluster Analysis</a></li>
+  <li><a href="#cluster-analysis" id="toc-cluster-analysis" class="nav-link" data-scroll-target="#cluster-analysis">Cluster Analysis</a>
+  <ul class="collapse">
+  <li><a href="#latent-class-analysis" id="toc-latent-class-analysis" class="nav-link" data-scroll-target="#latent-class-analysis">Latent Class Analysis</a></li>
+  <li><a href="#predicted-cluster-distribution" id="toc-predicted-cluster-distribution" class="nav-link" data-scroll-target="#predicted-cluster-distribution">Predicted cluster distribution</a></li>
+  <li><a href="#assess-aic-bic-entropy" id="toc-assess-aic-bic-entropy" class="nav-link" data-scroll-target="#assess-aic-bic-entropy">Assess AIC, BIC, Entropy</a></li>
+  </ul></li>
+  <li><a href="#customer-profile-visualization" id="toc-customer-profile-visualization" class="nav-link" data-scroll-target="#customer-profile-visualization">Customer Profile Visualization</a>
+  <ul class="collapse">
+  <li><a href="#feature-intensity-heatmap" id="toc-feature-intensity-heatmap" class="nav-link" data-scroll-target="#feature-intensity-heatmap">Feature Intensity Heatmap</a></li>
+  <li><a href="#segment-composition-bar-chart" id="toc-segment-composition-bar-chart" class="nav-link" data-scroll-target="#segment-composition-bar-chart">Segment Composition Bar Chart</a></li>
+  </ul></li>
   </ul></li>
   </ul>
 </nav>
@@ -266,7 +318,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     <div>
     <div class="quarto-title-meta-heading">Modified</div>
     <div class="quarto-title-meta-contents">
-      <p class="date-modified">March 10, 2026</p>
+      <p class="date-modified">March 15, 2026</p>
     </div>
   </div>
     
@@ -277,48 +329,57 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </header>
 
 
-<section id="prototyping-module-for-visual-analytics-shiny-application" class="level1">
-<h1>Prototyping Module for Visual Analytics Shiny Application</h1>
-<section id="introduction---fintech-customer-behaviors-in-colombia" class="level2">
-<h2 class="anchored" data-anchor-id="introduction---fintech-customer-behaviors-in-colombia">Introduction - Fintech Customer Behaviors in Colombia</h2>
+<section id="overview" class="level1">
+<h1>Overview</h1>
+<section id="introduction-to-prototyping-module-for-visual-analytics-shiny-application" class="level2">
+<h2 class="anchored" data-anchor-id="introduction-to-prototyping-module-for-visual-analytics-shiny-application">Introduction to Prototyping Module for Visual Analytics Shiny Application</h2>
 <p>Our project dives into the Latin American fintech to understand what drives customer behavior.</p>
-<p>In this prototype, I’m using Latent Class Analysis (LCA) to group customers into meaningful personas based on customer behaviors. Users should be able to actively interact with the clustering model, like adjust the number of groups or change the model’s repetitions to see how the customer segments shift. The goal is to let analysts explore their own assumptions about which customers are most loyal and which ones are on the verge of leaving the platform.</p>
+<p>In this prototype, I’m using Latent Class Analysis (LCA) to group customers into meaningful personas based on customer behaviors. Users should be able to actively interact with the clustering model, like select their interested indicators or adjust the number of cluster groups to see how the customer segments shift. The goal is to let analysts explore their own assumptions about which customers are most loyal, valuable and which ones are on the verge of leaving the platform.</p>
 </section>
 <section id="the-dataset" class="level2">
 <h2 class="anchored" data-anchor-id="the-dataset">The Dataset</h2>
-<p>We’re using the COFINFAD dataset, which covers 48,723 customers from a major Colombian fintech firm. What makes this data special is that it combines information from different dimensions: - Demographics: Basic profiles like age, income, and location. - Product Usage: Which services they use, such as credit cards, loans, or insurance. - Digital Engagement: How often they log in and which app features they use. - Attitudinal Data: Rare metrics like NPS and satisfaction scores.</p>
-<p>By using the customer_data.csv file, we have access to 57 variables per user. This allows our clustering model to look at a customer’s entire digital and financial footprint, helping us distinguish between different groups—like “power users” versus “casual spenders”.</p>
+<p>We’re using the COFINFAD dataset, which covers 48,723 customers from a major Colombian fintech firm. What makes this data special is that it combines information from different dimensions:</p>
+<ul>
+<li>Demographics: Basic profiles like age, income, and location.</li>
+<li>Product Usage: Which services they use, such as credit cards, loans, or insurance.</li>
+<li>Digital Engagement: How often they log in and which app features they use.</li>
+<li>Attitudinal Data: Rare metrics like NPS and satisfaction scores.</li>
+</ul>
+<p>By using the customer_data.csv file, we have access to 57 variables per user. This allows our clustering model to look at a customer’s entire digital and financial footprint, helping us distinguish between different groups, like “power users” versus “casual spenders”.</p>
 </section>
+</section>
+<section id="getting-started" class="level1">
+<h1>Getting Started</h1>
 <section id="setting-the-analytical-tools-for-data-wrangling" class="level2">
 <h2 class="anchored" data-anchor-id="setting-the-analytical-tools-for-data-wrangling">Setting the Analytical Tools for Data Wrangling</h2>
 <p>We load the R packages using the <code>pacman::p_load()</code> function:</p>
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>pacman<span class="sc">::</span><span class="fu">p_load</span>(haven, tidyverse, </span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>               janitor, reshape2,</span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>               DT, kableExtra, lubridate)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>               DT, kableExtra, lubridate, poLCA)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 </section>
 <section id="data-wrangling" class="level2">
 <h2 class="anchored" data-anchor-id="data-wrangling">Data Wrangling</h2>
 <section id="data-source" class="level3">
-<h3 class="anchored" data-anchor-id="data-source">Data source</h3>
+<h3 class="anchored" data-anchor-id="data-source">Data Source</h3>
 <p>The dataset used in the exercise is behavioral and transactional data retrieved from 48,723 customers of a Colombian fintech company, collected over 12 months from January 4, 2023, to December 29, 2023. The data is from <a href="https://data.mendeley.com/datasets/mhb4zn3258/1">COFINFAD: Colombian Fintech Financial Analytics Dataset</a></p>
 <p>For this project, we are specifically using the <code>customer_data.csv</code> file, which aggregates 54 variables into a single record per user that’s proper for LCA clustering. The raw <code>transactions_data.csv</code> (transaction level logs) will not be used.</p>
 </section>
 <section id="import-data" class="level3">
-<h3 class="anchored" data-anchor-id="import-data">Import data</h3>
+<h3 class="anchored" data-anchor-id="import-data">Import Data</h3>
 <p>First, we import <code>customer_data.csv</code> dataset as <code>customer_raw_data</code>.</p>
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>customer_raw_data <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">"data/customer_data.csv"</span>,<span class="at">show_col_types =</span> <span class="cn">FALSE</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 </section>
 <section id="summary-of-data" class="level3">
-<h3 class="anchored" data-anchor-id="summary-of-data">Summary of data</h3>
+<h3 class="anchored" data-anchor-id="summary-of-data">Summary of Data</h3>
 <p>Checking the data structure in the Environment, the <code>customer_raw_data</code> has 48723 rows of 54 variables in different data types.</p>
 </section>
 <section id="check-missing-values" class="level3">
-<h3 class="anchored" data-anchor-id="check-missing-values">Check missing values</h3>
-<p>We first need to check the missing values as poLCA is sensitive to missing values. By checking the missing values can we decide whether it’s proper to include the data into our analysis or if we need to handle it. Before proceeding with the clustering, it is important to check missing values, as Latent Class Analysis (LCA) using poLCA is very sensitive to missing data.</p>
+<h3 class="anchored" data-anchor-id="check-missing-values">Check Missing Values</h3>
+<p>We first need to check the missing values as poLCA is sensitive to missing values. By checking the missing values we can decide whether to use the data or just drop it.</p>
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
 <span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a></span>
@@ -348,11 +409,10 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 # ℹ 44 more rows</code></pre>
 </div>
 </div>
-<p>As we can see in the result, complaint_topics, credit_utilization_ratio and feature_requests have missing_percentage of 50%, 37.5% and 33.1% which is quite high, we will filter these variables out from our analysis.</p>
-<p>The result shows that several variables have high missing_percentage: complaint_topics (50.0%), credit_utilization_ratio (37.5%), and feature_requests (33.1%). We will remove these three variables together with customer_id which doesn’t help in clustering, to ensure the stability and reliability of our analysis.</p>
+<p>As shown in result, <code>complaint_topics</code>, <code>credit_utilization_ratio</code> and <code>feature_requests</code> have quite high missing_percentage of 50%, 37.5% and 33.1%, we will remove these three variables together with <code>customer_id</code> which doesn’t help in clustering to ensure the stability and reliability of our analysis.</p>
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>df_filtered <span class="ot">&lt;-</span> customer_raw_data <span class="sc">%&gt;%</span></span>
-<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">select</span>(</span>
 <span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Exclude variables with high missing_percentage</span></span>
 <span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>    <span class="sc">-</span>complaint_topics, </span>
 <span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>    <span class="sc">-</span>credit_utilization_ratio, </span>
@@ -363,19 +423,20 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a>  )</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 </section>
-<section id="filtering-datanarrowing-down-for-selected-variables-for-our-project-use" class="level3">
-<h3 class="anchored" data-anchor-id="filtering-datanarrowing-down-for-selected-variables-for-our-project-use">2. Filtering data/narrowing down for selected variables for our project use</h3>
+<section id="narrow-down-variables" class="level3">
+<h3 class="anchored" data-anchor-id="narrow-down-variables">Narrow Down Variables</h3>
 <p>In this step, we narrow down our dataset to the most relevant variables for clustering. Inspired by the RFM (Recency, Frequency, Monetary) framework, we transform raw date columns into meaningful behavioral metrics to enhance the model’s interpretability:</p>
 <ul>
-<li>Tenure (Loyalty): <code>user_tenure_days</code> is calculated as <code>last_tx - first_tx</code>, representing the total duration of the customer’s active relationship with the fintech.</li>
-<li>Recency (Activity): <code>days_since_last_tx</code> is calculated as the number of days between the dataset’s cutoff date and the user’s <code>last_transaction_date</code>. This helps identify churned vs.&nbsp;active users.</li>
+<li>Tenure (Loyalty): Created <code>user_tenure_days</code> (last vs.&nbsp;first transaction) to measure relationship length.</li>
+<li>Recency (Activity): Created <code>days_since_last_tx</code> to separate active users from churned ones.</li>
 </ul>
-<p>High-cardinality geographic data <code>location</code> that contains special characters is removed.</p>
-<p>Redundant financial metrics <code>tx_count</code>, <code>avg_tx_value</code> are removed to prevent multicollinearity, <code>total_tx_volume</code>, <code>monthly_transaction_count</code>, <code>average_transaction_value</code>, <code>avg_daily_transactionsas</code> are also removed, as <code>total_transaction_volume</code> already serves as customer value.</p>
-<p>We also removed some other fields including <code>marital_status</code>, <code>occupation</code>, <code>education_level</code>, <code>household_size</code> to simplify the demographic details which we will not focus in this analysis.</p>
-<p><code>base_satisfaction</code>, <code>tx_satisfaction</code>, <code>product_satisfaction</code>, <code>app_store_rating</code> are removed as we already have <code>satisfaction_score</code> and <code>nps_score</code> 作为综合指标了.</p>
-<p><code>acquisition_channel</code>, <code>resolved_tickets_ratio</code>, <code>feedback_sentiment</code> are removed due to they are more related to operational side but in this analysis we focus more on user value.</p>
-<p><code>churn_probability</code> is also removed as 这是测试数据自带的预测结果。如果我们把别人已经分好的类放进聚类模型，会干扰我们自己寻找潜在类别的过程。</p>
+<p>Key Filters Applied:</p>
+<ul>
+<li>Reduce Noise: Dropped <code>location</code> and granular demographics like <code>marital_status</code> or <code>occupation</code> to keep the model focused on financial behavior.</li>
+<li>Eliminate Redundancy: Removed values such as <code>tx_count</code> and <code>avg_tx_value</code> to prevent multicollinearity, keeping <code>total_transaction_volume</code> to capture historical contribution, <code>customer_lifetime_value</code> to account for future profitability, <code>transaction_frequency</code> as a measure of user engagement.</li>
+<li>Consolidate Sentiment: Used <code>satisfaction_score</code> and <code>nps_score</code> as primary metrics, dropping detailed sub-scores like <code>app_store_rating</code>.</li>
+<li>Avoid Bias: Removed <code>customer_tenure</code> and other pre-existing predictions to ensure our LCA model discovers unbiased patterns.</li>
+</ul>
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(lubridate) <span class="co"># Used for date manipulation</span></span>
 <span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a></span>
@@ -394,44 +455,832 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb6-15"><a href="#cb6-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">days_since_last_tx =</span> <span class="fu">as.numeric</span>(study_cutoff_date <span class="sc">-</span> last_transaction_date)) <span class="sc">%&gt;%</span></span>
 <span id="cb6-16"><a href="#cb6-16" aria-hidden="true" tabindex="-1"></a>  </span>
 <span id="cb6-17"><a href="#cb6-17" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Select final variables and drop redundant columns</span></span>
-<span id="cb6-18"><a href="#cb6-18" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(</span>
-<span id="cb6-19"><a href="#cb6-19" aria-hidden="true" tabindex="-1"></a>    <span class="sc">-</span>marital_status, <span class="sc">-</span>occupation, <span class="sc">-</span>household_size, <span class="sc">-</span>gender, <span class="sc">-</span>location,</span>
-<span id="cb6-20"><a href="#cb6-20" aria-hidden="true" tabindex="-1"></a>    <span class="sc">-</span>average_transaction_value, <span class="sc">-</span>first_tx, <span class="sc">-</span>last_tx, <span class="sc">-</span>last_transaction_date, <span class="sc">-</span>first_transaction_date, <span class="sc">-</span>last_survey_date,    </span>
-<span id="cb6-21"><a href="#cb6-21" aria-hidden="true" tabindex="-1"></a>    <span class="sc">-</span>avg_daily_transactions, <span class="sc">-</span>total_tx_volume, <span class="sc">-</span>avg_tx_value, <span class="sc">-</span>tx_count, <span class="sc">-</span>transaction_frequency,</span>
-<span id="cb6-22"><a href="#cb6-22" aria-hidden="true" tabindex="-1"></a>    <span class="sc">-</span>base_satisfaction, <span class="sc">-</span>tx_satisfaction, <span class="sc">-</span>product_satisfaction, <span class="sc">-</span>app_store_rating,</span>
-<span id="cb6-23"><a href="#cb6-23" aria-hidden="true" tabindex="-1"></a>    <span class="sc">-</span>churn_probability, <span class="sc">-</span>customer_tenure,</span>
-<span id="cb6-24"><a href="#cb6-24" aria-hidden="true" tabindex="-1"></a>    <span class="sc">-</span>acquisition_channel, <span class="sc">-</span>resolved_tickets_ratio, <span class="sc">-</span>feedback_sentiment, <span class="sc">-</span>support_tickets_count, <span class="sc">-</span>failed_transactions, <span class="sc">-</span>international_transactions, <span class="sc">-</span>weekend_transaction_ratio</span>
-<span id="cb6-25"><a href="#cb6-25" aria-hidden="true" tabindex="-1"></a>           </span>
-<span id="cb6-26"><a href="#cb6-26" aria-hidden="true" tabindex="-1"></a>  )</span>
-<span id="cb6-27"><a href="#cb6-27" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-28"><a href="#cb6-28" aria-hidden="true" tabindex="-1"></a><span class="co"># Verify the updated list of variables</span></span>
-<span id="cb6-29"><a href="#cb6-29" aria-hidden="true" tabindex="-1"></a><span class="fu">colnames</span>(df_engineered)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb6-18"><a href="#cb6-18" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">select</span>(</span>
+<span id="cb6-19"><a href="#cb6-19" aria-hidden="true" tabindex="-1"></a>    <span class="sc">-</span>marital_status, <span class="sc">-</span>occupation, <span class="sc">-</span>gender, <span class="sc">-</span>location, <span class="sc">-</span>average_transaction_value, <span class="sc">-</span>first_tx, <span class="sc">-</span>last_tx, <span class="sc">-</span>last_transaction_date, <span class="sc">-</span>first_transaction_date, <span class="sc">-</span>last_survey_date, <span class="sc">-</span>avg_daily_transactions, <span class="sc">-</span>total_tx_volume, <span class="sc">-</span>avg_tx_value, <span class="sc">-</span>tx_count, <span class="sc">-</span>monthly_transaction_count, <span class="sc">-</span>base_satisfaction, <span class="sc">-</span>tx_satisfaction, <span class="sc">-</span>product_satisfaction, <span class="sc">-</span>app_store_rating, <span class="sc">-</span>customer_tenure, <span class="sc">-</span>resolved_tickets_ratio, <span class="sc">-</span>support_tickets_count, <span class="sc">-</span>failed_transactions,  <span class="sc">-</span>weekend_transaction_ratio, <span class="sc">-</span>complaint_topics, <span class="sc">-</span>credit_utilization_ratio, <span class="sc">-</span>feature_requests, <span class="sc">-</span>customer_id, <span class="sc">-</span>app_logins_frequency, <span class="sc">-</span>nps_score, <span class="sc">-</span>feedback_sentiment</span>
+<span id="cb6-20"><a href="#cb6-20" aria-hidden="true" tabindex="-1"></a>           </span>
+<span id="cb6-21"><a href="#cb6-21" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb6-22"><a href="#cb6-22" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-23"><a href="#cb6-23" aria-hidden="true" tabindex="-1"></a><span class="co"># Verify the updated list of variables</span></span>
+<span id="cb6-24"><a href="#cb6-24" aria-hidden="true" tabindex="-1"></a><span class="fu">colnames</span>(df_engineered)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code> [1] "age"                        "income_bracket"            
- [3] "education_level"            "customer_segment"          
- [5] "savings_account"            "credit_card"               
- [7] "personal_loan"              "investment_account"        
- [9] "insurance_product"          "active_products"           
-[11] "app_logins_frequency"       "feature_usage_diversity"   
-[13] "bill_payment_user"          "auto_savings_enabled"      
-[15] "satisfaction_score"         "nps_score"                 
-[17] "clv_segment"                "monthly_transaction_count" 
-[19] "total_transaction_volume"   "preferred_transaction_type"
-[21] "customer_lifetime_value"    "customer_id"               
-[23] "credit_utilization_ratio"   "feature_requests"          
-[25] "complaint_topics"           "user_tenure_days"          
-[27] "days_since_last_tx"        </code></pre>
+ [3] "education_level"            "household_size"            
+ [5] "acquisition_channel"        "customer_segment"          
+ [7] "savings_account"            "credit_card"               
+ [9] "personal_loan"              "investment_account"        
+[11] "insurance_product"          "active_products"           
+[13] "feature_usage_diversity"    "bill_payment_user"         
+[15] "auto_savings_enabled"       "international_transactions"
+[17] "satisfaction_score"         "clv_segment"               
+[19] "total_transaction_volume"   "transaction_frequency"     
+[21] "preferred_transaction_type" "churn_probability"         
+[23] "customer_lifetime_value"    "user_tenure_days"          
+[25] "days_since_last_tx"        </code></pre>
 </div>
 </div>
 </section>
-<section id="convert-data-types-包括按照-polca-要求将-01-转为-12对-age-income_bracket-tx_count-total_transaction_volume-等关键指标进行科学分箱" class="level3">
-<h3 class="anchored" data-anchor-id="convert-data-types-包括按照-polca-要求将-01-转为-12对-age-income_bracket-tx_count-total_transaction_volume-等关键指标进行科学分箱">Convert data types （包括按照 poLCA 要求将 0/1 转为 1/2，对 age, income_bracket, tx_count, total_transaction_volume 等关键指标进行科学分箱</h3>
+<section id="check-data-types" class="level3">
+<h3 class="anchored" data-anchor-id="check-data-types">Check Data Types</h3>
+<p>We first need to evaluate the selected variables to understand their current formats and value ranges. This assessment ensures that our transformation logic accurately aligns with the data distribution and business context.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a><span class="co"># define the final 27 selected variables for cluster analysis</span></span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>selected_vars <span class="ot">&lt;-</span> <span class="fu">c</span>(</span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>  <span class="st">"age"</span>, <span class="st">"income_bracket"</span>, <span class="st">"education_level"</span>, <span class="st">"household_size"</span>,</span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>  <span class="st">"acquisition_channel"</span>, <span class="st">"customer_segment"</span>, <span class="st">"savings_account"</span>, <span class="st">"credit_card"</span>,</span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a>  <span class="st">"personal_loan"</span>, <span class="st">"investment_account"</span>, <span class="st">"insurance_product"</span>, <span class="st">"active_products"</span>,</span>
+<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a>  <span class="st">"feature_usage_diversity"</span>, <span class="st">"bill_payment_user"</span>, <span class="st">"auto_savings_enabled"</span>,</span>
+<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a>  <span class="st">"international_transactions"</span>, <span class="st">"satisfaction_score"</span>, <span class="st">"churn_probability"</span>,</span>
+<span id="cb8-10"><a href="#cb8-10" aria-hidden="true" tabindex="-1"></a>  <span class="st">"clv_segment"</span>, <span class="st">"total_transaction_volume"</span>, <span class="st">"transaction_frequency"</span>, <span class="st">"preferred_transaction_type"</span>,</span>
+<span id="cb8-11"><a href="#cb8-11" aria-hidden="true" tabindex="-1"></a>  <span class="st">"customer_lifetime_value"</span>, <span class="st">"user_tenure_days"</span>, <span class="st">"days_since_last_tx"</span></span>
+<span id="cb8-12"><a href="#cb8-12" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb8-13"><a href="#cb8-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-14"><a href="#cb8-14" aria-hidden="true" tabindex="-1"></a><span class="co"># display data types, sample values, value range, unique count</span></span>
+<span id="cb8-15"><a href="#cb8-15" aria-hidden="true" tabindex="-1"></a>df_inspection <span class="ot">&lt;-</span> df_engineered <span class="sc">%&gt;%</span></span>
+<span id="cb8-16"><a href="#cb8-16" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">select</span>(<span class="fu">all_of</span>(selected_vars)) <span class="sc">%&gt;%</span></span>
+<span id="cb8-17"><a href="#cb8-17" aria-hidden="true" tabindex="-1"></a>  <span class="fu">map_df</span>(<span class="sc">~</span> <span class="fu">tibble</span>(</span>
+<span id="cb8-18"><a href="#cb8-18" aria-hidden="true" tabindex="-1"></a>    <span class="at">Data_Type =</span> <span class="fu">class</span>(.x)[<span class="dv">1</span>],</span>
+<span id="cb8-19"><a href="#cb8-19" aria-hidden="true" tabindex="-1"></a>    <span class="at">Sample_Values =</span> <span class="fu">paste</span>(<span class="fu">head</span>(<span class="fu">unique</span>(<span class="fu">na.omit</span>(.x)), <span class="dv">3</span>), <span class="at">collapse =</span> <span class="st">", "</span>),</span>
+<span id="cb8-20"><a href="#cb8-20" aria-hidden="true" tabindex="-1"></a>    <span class="at">Min =</span> <span class="cf">if</span>(<span class="fu">is.numeric</span>(.x)) <span class="fu">as.character</span>(<span class="fu">min</span>(.x, <span class="at">na.omit =</span> <span class="cn">TRUE</span>)) <span class="cf">else</span> <span class="st">"-"</span>,</span>
+<span id="cb8-21"><a href="#cb8-21" aria-hidden="true" tabindex="-1"></a>    <span class="at">Max =</span> <span class="cf">if</span>(<span class="fu">is.numeric</span>(.x)) <span class="fu">as.character</span>(<span class="fu">max</span>(.x, <span class="at">na.omit =</span> <span class="cn">TRUE</span>)) <span class="cf">else</span> <span class="st">"-"</span>,</span>
+<span id="cb8-22"><a href="#cb8-22" aria-hidden="true" tabindex="-1"></a>    <span class="at">Unique_Count =</span> <span class="fu">n_distinct</span>(.x)</span>
+<span id="cb8-23"><a href="#cb8-23" aria-hidden="true" tabindex="-1"></a>  ), <span class="at">.id =</span> <span class="st">"Variable"</span>)</span>
+<span id="cb8-24"><a href="#cb8-24" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-25"><a href="#cb8-25" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-26"><a href="#cb8-26" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(df_inspection, <span class="at">n =</span> <span class="cn">Inf</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 25 × 6
+   Variable                   Data_Type Sample_Values   Min   Max   Unique_Count
+   &lt;chr&gt;                      &lt;chr&gt;     &lt;chr&gt;           &lt;chr&gt; &lt;chr&gt;        &lt;int&gt;
+ 1 age                        numeric   44, 45, 59      1     60               6
+ 2 income_bracket             character Very High, Med… -     -                4
+ 3 education_level            character Master, Bachel… -     -                4
+ 4 household_size             numeric   5, 2, 4         1     13              13
+ 5 acquisition_channel        character Partnership, P… -     -                4
+ 6 customer_segment           character occasional, re… -     -                4
+ 7 savings_account            logical   TRUE, FALSE     -     -                2
+ 8 credit_card                logical   TRUE, FALSE     -     -                2
+ 9 personal_loan              logical   FALSE, TRUE     -     -                2
+10 investment_account         logical   FALSE, TRUE     -     -                2
+11 insurance_product          logical   TRUE, FALSE     -     -                2
+12 active_products            numeric   1, 5, 3         1     5                5
+13 feature_usage_diversity    numeric   3, 0, 4         0     10              11
+14 bill_payment_user          logical   FALSE, TRUE     -     -                2
+15 auto_savings_enabled       logical   FALSE, TRUE     -     -                2
+16 international_transactions numeric   1, 0, 3         0     6                7
+17 satisfaction_score         numeric   5, 3, 4         1     6                5
+18 churn_probability          numeric   0.362268822469… 0.11… 1             1977
+19 clv_segment                character Gold, Bronze, … -     -                4
+20 total_transaction_volume   numeric   60540250, 2340… 1     1073…        48277
+21 transaction_frequency      numeric   0.030769230769… 0.02… 215.…         6365
+22 preferred_transaction_type character Transfer, Paym… -     -                4
+23 customer_lifetime_value    numeric   312414808.0287… 0     1776…        48723
+24 user_tenure_days           numeric   354, 318, 315   1     359            220
+25 days_since_last_tx         numeric   24, 11, 63      0     232            174</code></pre>
+</div>
+</div>
+</section>
+<section id="convert-data-types" class="level3">
+<h3 class="anchored" data-anchor-id="convert-data-types">Convert Data Types</h3>
+<p>To prepare for poLCA cluster analysis, the raw data was restructured into a categorical format optimized for behavioral segmentation. Also all features were coerced into positive integers (<span class="math inline">\(1, 2, 3...\)</span>) then transferred to factors, and rows with missing values were removed, to meet the strict requirements of the poLCA algorithm.</p>
+<ul>
+<li>Custom Binning: High-variance metrics like total_transaction_volume and customer_lifetime_value were binned using fixed business thresholds (e.g., <span class="math inline">\(&lt;100M\)</span>, <span class="math inline">\(100M-1B\)</span>, <span class="math inline">\(&gt;1B\)</span>) to better isolate “Whale” users from the mass market.</li>
+<li>Lifecycle Tiers: Engagement variables (transaction_frequency, days_since_last_tx, user_tenure_days) were grouped into stages (e.g., Active, At Risk, Loyal) to capture user stickiness.</li>
+<li>Fixed Mapping: Qualitative variables (acquisition_channel, customer_segment) were converted to factors with set levels to ensure consistent numeric encoding.</li>
+</ul>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>df_labeled <span class="ot">&lt;-</span> df_engineered <span class="sc">%&gt;%</span></span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">acquisition_channel =</span> <span class="fu">factor</span>(acquisition_channel)) <span class="sc">%&gt;%</span></span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">acquisition_channel =</span> <span class="fu">recode</span>(acquisition_channel, </span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>                                      <span class="st">"Partnership"</span> <span class="ot">=</span> <span class="st">"Indirect"</span>, </span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a>                                      <span class="st">"Referral"</span> <span class="ot">=</span> <span class="st">"Indirect"</span>)) <span class="sc">%&gt;%</span></span>
+<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">customer_segment =</span> <span class="fu">recode</span>(customer_segment,</span>
+<span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a>                                   <span class="st">"inactive"</span> <span class="ot">=</span> <span class="st">"Low_Use"</span>,</span>
+<span id="cb10-9"><a href="#cb10-9" aria-hidden="true" tabindex="-1"></a>                                   <span class="st">"occasional"</span> <span class="ot">=</span> <span class="st">"Low_Use"</span>,</span>
+<span id="cb10-10"><a href="#cb10-10" aria-hidden="true" tabindex="-1"></a>                                   <span class="st">"regular"</span> <span class="ot">=</span> <span class="st">"Mid_Use"</span>,</span>
+<span id="cb10-11"><a href="#cb10-11" aria-hidden="true" tabindex="-1"></a>                                   <span class="st">"power"</span> <span class="ot">=</span> <span class="st">"High_Use"</span>)) <span class="sc">%&gt;%</span></span>
+<span id="cb10-12"><a href="#cb10-12" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb10-13"><a href="#cb10-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">international_transactions =</span> <span class="fu">ifelse</span>(international_transactions <span class="sc">==</span> <span class="dv">0</span>, <span class="st">"None"</span>, <span class="st">"Has_International"</span>)) <span class="sc">%&gt;%</span></span>
+<span id="cb10-14"><a href="#cb10-14" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb10-15"><a href="#cb10-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">income_bracket =</span> <span class="fu">recode</span>(income_bracket, <span class="st">"Very High"</span> <span class="ot">=</span> <span class="st">"High"</span>)) <span class="sc">%&gt;%</span></span>
+<span id="cb10-16"><a href="#cb10-16" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb10-17"><a href="#cb10-17" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">education_level =</span> <span class="fu">recode</span>(education_level, </span>
+<span id="cb10-18"><a href="#cb10-18" aria-hidden="true" tabindex="-1"></a>                                  <span class="st">"Master"</span> <span class="ot">=</span> <span class="st">"Postgrad"</span>, </span>
+<span id="cb10-19"><a href="#cb10-19" aria-hidden="true" tabindex="-1"></a>                                  <span class="st">"PhD"</span> <span class="ot">=</span> <span class="st">"Postgrad"</span>)) <span class="sc">%&gt;%</span></span>
+<span id="cb10-20"><a href="#cb10-20" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-21"><a href="#cb10-21" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">active_products =</span> <span class="fu">cut</span>(active_products, </span>
+<span id="cb10-22"><a href="#cb10-22" aria-hidden="true" tabindex="-1"></a>                               <span class="at">breaks =</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="dv">2</span>, <span class="cn">Inf</span>), </span>
+<span id="cb10-23"><a href="#cb10-23" aria-hidden="true" tabindex="-1"></a>                               <span class="at">labels =</span> <span class="fu">c</span>(<span class="st">"Low_Holdings"</span>, <span class="st">"High_Holdings"</span>))) <span class="sc">%&gt;%</span></span>
+<span id="cb10-24"><a href="#cb10-24" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-25"><a href="#cb10-25" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">satisfaction_score =</span> <span class="fu">cut</span>(satisfaction_score, </span>
+<span id="cb10-26"><a href="#cb10-26" aria-hidden="true" tabindex="-1"></a>                                  <span class="at">breaks =</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="dv">3</span>, <span class="dv">5</span>, <span class="cn">Inf</span>), </span>
+<span id="cb10-27"><a href="#cb10-27" aria-hidden="true" tabindex="-1"></a>                                  <span class="at">labels =</span> <span class="fu">c</span>(<span class="st">"Dissatisfied"</span>, <span class="st">"Neutral"</span>, <span class="st">"Satisfied"</span>))) <span class="sc">%&gt;%</span></span>
+<span id="cb10-28"><a href="#cb10-28" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb10-29"><a href="#cb10-29" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">clv_segment =</span> <span class="fu">recode</span>(clv_segment, </span>
+<span id="cb10-30"><a href="#cb10-30" aria-hidden="true" tabindex="-1"></a>                              <span class="st">"Bronze"</span> <span class="ot">=</span> <span class="st">"Standard"</span>, </span>
+<span id="cb10-31"><a href="#cb10-31" aria-hidden="true" tabindex="-1"></a>                              <span class="st">"Silver"</span> <span class="ot">=</span> <span class="st">"Standard"</span>, </span>
+<span id="cb10-32"><a href="#cb10-32" aria-hidden="true" tabindex="-1"></a>                              <span class="st">"Gold"</span> <span class="ot">=</span> <span class="st">"High_Value"</span>, </span>
+<span id="cb10-33"><a href="#cb10-33" aria-hidden="true" tabindex="-1"></a>                              <span class="st">"Platinum"</span> <span class="ot">=</span> <span class="st">"High_Value"</span>)) <span class="sc">%&gt;%</span></span>
+<span id="cb10-34"><a href="#cb10-34" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">clv_segment =</span> <span class="fu">factor</span>(clv_segment, <span class="at">levels =</span> <span class="fu">c</span>(<span class="st">"Standard"</span>, <span class="st">"High_Value"</span>))) <span class="sc">%&gt;%</span></span>
+<span id="cb10-35"><a href="#cb10-35" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb10-36"><a href="#cb10-36" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">preferred_transaction_type =</span> <span class="fu">recode</span>(preferred_transaction_type,</span>
+<span id="cb10-37"><a href="#cb10-37" aria-hidden="true" tabindex="-1"></a>                                             <span class="st">"Deposit"</span> <span class="ot">=</span> <span class="st">"Inflow_Eco"</span>,</span>
+<span id="cb10-38"><a href="#cb10-38" aria-hidden="true" tabindex="-1"></a>                                             <span class="st">"Payment"</span> <span class="ot">=</span> <span class="st">"Inflow_Eco"</span>,</span>
+<span id="cb10-39"><a href="#cb10-39" aria-hidden="true" tabindex="-1"></a>                                             <span class="st">"Transfer"</span> <span class="ot">=</span> <span class="st">"Outflow_Transfer"</span>,</span>
+<span id="cb10-40"><a href="#cb10-40" aria-hidden="true" tabindex="-1"></a>                                             <span class="st">"Withdrawal"</span> <span class="ot">=</span> <span class="st">"Outflow_Transfer"</span>)) <span class="sc">%&gt;%</span></span>
+<span id="cb10-41"><a href="#cb10-41" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">preferred_transaction_type =</span> <span class="fu">factor</span>(preferred_transaction_type, </span>
+<span id="cb10-42"><a href="#cb10-42" aria-hidden="true" tabindex="-1"></a>                                             <span class="at">levels =</span> <span class="fu">c</span>(<span class="st">"Inflow_Eco"</span>, <span class="st">"Outflow_Transfer"</span>))) <span class="sc">%&gt;%</span></span>
+<span id="cb10-43"><a href="#cb10-43" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb10-44"><a href="#cb10-44" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-45"><a href="#cb10-45" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">total_transaction_volume =</span> <span class="fu">cut</span>(total_transaction_volume, </span>
+<span id="cb10-46"><a href="#cb10-46" aria-hidden="true" tabindex="-1"></a>                                        <span class="at">breaks =</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="dv">100000000</span>, <span class="dv">1000000000</span>, <span class="cn">Inf</span>), </span>
+<span id="cb10-47"><a href="#cb10-47" aria-hidden="true" tabindex="-1"></a>                                        <span class="at">labels =</span> <span class="fu">c</span>(<span class="st">"Mass_Volume"</span>, <span class="st">"High_Volume"</span>, <span class="st">"Whale_Volume"</span>),</span>
+<span id="cb10-48"><a href="#cb10-48" aria-hidden="true" tabindex="-1"></a>                                        <span class="at">include.lowest =</span> <span class="cn">TRUE</span>)) <span class="sc">%&gt;%</span></span>
+<span id="cb10-49"><a href="#cb10-49" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb10-50"><a href="#cb10-50" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">customer_lifetime_value =</span> <span class="fu">cut</span>(customer_lifetime_value, </span>
+<span id="cb10-51"><a href="#cb10-51" aria-hidden="true" tabindex="-1"></a>                                       <span class="at">breaks =</span> <span class="fu">c</span>(<span class="sc">-</span><span class="dv">1</span>, <span class="dv">50000000</span>, <span class="dv">500000000</span>, <span class="cn">Inf</span>), </span>
+<span id="cb10-52"><a href="#cb10-52" aria-hidden="true" tabindex="-1"></a>                                       <span class="at">labels =</span> <span class="fu">c</span>(<span class="st">"Low_CLV"</span>, <span class="st">"Mid_CLV"</span>, <span class="st">"High_CLV"</span>))) <span class="sc">%&gt;%</span></span>
+<span id="cb10-53"><a href="#cb10-53" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb10-54"><a href="#cb10-54" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">transaction_frequency =</span> <span class="fu">cut</span>(transaction_frequency, </span>
+<span id="cb10-55"><a href="#cb10-55" aria-hidden="true" tabindex="-1"></a>                                     <span class="at">breaks =</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="dv">1</span>, <span class="dv">10</span>, <span class="cn">Inf</span>), </span>
+<span id="cb10-56"><a href="#cb10-56" aria-hidden="true" tabindex="-1"></a>                                     <span class="at">labels =</span> <span class="fu">c</span>(<span class="st">"Infrequent"</span>, <span class="st">"Regular"</span>, <span class="st">"Power_User"</span>),</span>
+<span id="cb10-57"><a href="#cb10-57" aria-hidden="true" tabindex="-1"></a>                                     <span class="at">include.lowest =</span> <span class="cn">TRUE</span>)) <span class="sc">%&gt;%</span></span>
+<span id="cb10-58"><a href="#cb10-58" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb10-59"><a href="#cb10-59" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">user_tenure_days =</span> <span class="fu">cut</span>(user_tenure_days, </span>
+<span id="cb10-60"><a href="#cb10-60" aria-hidden="true" tabindex="-1"></a>                                <span class="at">breaks =</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="dv">90</span>, <span class="dv">270</span>, <span class="cn">Inf</span>), </span>
+<span id="cb10-61"><a href="#cb10-61" aria-hidden="true" tabindex="-1"></a>                                <span class="at">labels =</span> <span class="fu">c</span>(<span class="st">"New_User"</span>, <span class="st">"Developing"</span>, <span class="st">"Loyal_User"</span>),</span>
+<span id="cb10-62"><a href="#cb10-62" aria-hidden="true" tabindex="-1"></a>                                <span class="at">include.lowest =</span> <span class="cn">TRUE</span>)) <span class="sc">%&gt;%</span></span>
+<span id="cb10-63"><a href="#cb10-63" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb10-64"><a href="#cb10-64" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">days_since_last_tx =</span> <span class="fu">cut</span>(days_since_last_tx, </span>
+<span id="cb10-65"><a href="#cb10-65" aria-hidden="true" tabindex="-1"></a>                                  <span class="at">breaks =</span> <span class="fu">c</span>(<span class="sc">-</span><span class="dv">1</span>, <span class="dv">7</span>, <span class="dv">30</span>, <span class="cn">Inf</span>), </span>
+<span id="cb10-66"><a href="#cb10-66" aria-hidden="true" tabindex="-1"></a>                                  <span class="at">labels =</span> <span class="fu">c</span>(<span class="st">"Active_Recent"</span>, <span class="st">"Warning_At_Risk"</span>, <span class="st">"Churned_Inactive"</span>))) <span class="sc">%&gt;%</span></span>
+<span id="cb10-67"><a href="#cb10-67" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb10-68"><a href="#cb10-68" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">churn_probability =</span> <span class="fu">cut</span>(churn_probability, </span>
+<span id="cb10-69"><a href="#cb10-69" aria-hidden="true" tabindex="-1"></a>                                 <span class="at">breaks =</span> <span class="fu">c</span>(<span class="sc">-</span><span class="cn">Inf</span>, <span class="fl">0.3</span>, <span class="fl">0.7</span>, <span class="cn">Inf</span>), </span>
+<span id="cb10-70"><a href="#cb10-70" aria-hidden="true" tabindex="-1"></a>                                 <span class="at">labels =</span> <span class="fu">c</span>(<span class="st">"Safe"</span>, <span class="st">"Concern"</span>, <span class="st">"High_Risk"</span>))) <span class="sc">%&gt;%</span></span>
+<span id="cb10-71"><a href="#cb10-71" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-72"><a href="#cb10-72" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="fu">across</span>(<span class="fu">c</span>(savings_account, credit_card, personal_loan, investment_account, </span>
+<span id="cb10-73"><a href="#cb10-73" aria-hidden="true" tabindex="-1"></a>                  insurance_product, bill_payment_user, auto_savings_enabled), </span>
+<span id="cb10-74"><a href="#cb10-74" aria-hidden="true" tabindex="-1"></a>                <span class="sc">~</span> <span class="fu">recode</span>(<span class="fu">as.numeric</span>(.x), <span class="st">`</span><span class="at">1</span><span class="st">`</span> <span class="ot">=</span> <span class="st">"Yes"</span>, <span class="st">`</span><span class="at">0</span><span class="st">`</span> <span class="ot">=</span> <span class="st">"No"</span>))) <span class="sc">%&gt;%</span></span>
+<span id="cb10-75"><a href="#cb10-75" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb10-76"><a href="#cb10-76" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">age =</span> <span class="fu">cut</span>(age, <span class="at">breaks =</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="dv">30</span>, <span class="dv">50</span>, <span class="cn">Inf</span>), <span class="at">labels =</span> <span class="fu">c</span>(<span class="st">"Young"</span>, <span class="st">"MiddleAge"</span>, <span class="st">"Senior"</span>))) <span class="sc">%&gt;%</span></span>
+<span id="cb10-77"><a href="#cb10-77" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">household_size =</span> <span class="fu">cut</span>(household_size, <span class="at">breaks =</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="dv">2</span>, <span class="dv">5</span>, <span class="cn">Inf</span>), <span class="at">labels =</span> <span class="fu">c</span>(<span class="st">"Small"</span>, <span class="st">"Medium"</span>, <span class="st">"Large"</span>))) <span class="sc">%&gt;%</span></span>
+<span id="cb10-78"><a href="#cb10-78" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb10-79"><a href="#cb10-79" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">feature_diversity =</span> <span class="fu">cut</span>(feature_usage_diversity, <span class="at">breaks =</span> <span class="fu">c</span>(<span class="sc">-</span><span class="cn">Inf</span>, <span class="dv">2</span>, <span class="dv">6</span>, <span class="cn">Inf</span>), </span>
+<span id="cb10-80"><a href="#cb10-80" aria-hidden="true" tabindex="-1"></a>                                 <span class="at">labels =</span> <span class="fu">c</span>(<span class="st">"Basic"</span>, <span class="st">"Intermediate"</span>, <span class="st">"Power"</span>))) <span class="sc">%&gt;%</span></span>
+<span id="cb10-81"><a href="#cb10-81" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb10-82"><a href="#cb10-82" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="fu">across</span>(<span class="fu">where</span>(is.character), as.factor)) <span class="sc">%&gt;%</span></span>
+<span id="cb10-83"><a href="#cb10-83" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-84"><a href="#cb10-84" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Selection and Cleaning</span></span>
+<span id="cb10-85"><a href="#cb10-85" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">select</span>(age, income_bracket, education_level, household_size, acquisition_channel,</span>
+<span id="cb10-86"><a href="#cb10-86" aria-hidden="true" tabindex="-1"></a>                customer_segment, savings_account, credit_card, personal_loan, investment_account, </span>
+<span id="cb10-87"><a href="#cb10-87" aria-hidden="true" tabindex="-1"></a>                insurance_product, active_products, feature_diversity, </span>
+<span id="cb10-88"><a href="#cb10-88" aria-hidden="true" tabindex="-1"></a>                bill_payment_user, auto_savings_enabled, international_transactions, satisfaction_score, </span>
+<span id="cb10-89"><a href="#cb10-89" aria-hidden="true" tabindex="-1"></a>                clv_segment, total_transaction_volume, churn_probability,</span>
+<span id="cb10-90"><a href="#cb10-90" aria-hidden="true" tabindex="-1"></a>                transaction_frequency, preferred_transaction_type, customer_lifetime_value, </span>
+<span id="cb10-91"><a href="#cb10-91" aria-hidden="true" tabindex="-1"></a>                user_tenure_days, days_since_last_tx) <span class="sc">%&gt;%</span></span>
+<span id="cb10-92"><a href="#cb10-92" aria-hidden="true" tabindex="-1"></a>  <span class="fu">na.omit</span>()</span>
+<span id="cb10-93"><a href="#cb10-93" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-94"><a href="#cb10-94" aria-hidden="true" tabindex="-1"></a>df_lca_final <span class="ot">&lt;-</span> df_labeled <span class="sc">%&gt;%</span></span>
+<span id="cb10-95"><a href="#cb10-95" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="fu">across</span>(<span class="fu">everything</span>(), <span class="sc">~</span> <span class="fu">as.numeric</span>(<span class="fu">as.factor</span>(.x))))</span>
+<span id="cb10-96"><a href="#cb10-96" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-97"><a href="#cb10-97" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-98"><a href="#cb10-98" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(df_lca_final)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>      age        income_bracket education_level household_size 
+ Min.   :1.000   Min.   :1.0    Min.   :1.000   Min.   :1.000  
+ 1st Qu.:1.000   1st Qu.:1.0    1st Qu.:1.000   1st Qu.:1.000  
+ Median :2.000   Median :2.0    Median :2.000   Median :2.000  
+ Mean   :2.003   Mean   :2.1    Mean   :1.797   Mean   :1.818  
+ 3rd Qu.:3.000   3rd Qu.:3.0    3rd Qu.:2.000   3rd Qu.:2.000  
+ Max.   :3.000   Max.   :3.0    Max.   :3.000   Max.   :3.000  
+ acquisition_channel customer_segment savings_account  credit_card   
+ Min.   :1.000       Min.   :1.000    Min.   :1.000   Min.   :1.000  
+ 1st Qu.:1.000       1st Qu.:2.000    1st Qu.:2.000   1st Qu.:1.000  
+ Median :2.000       Median :2.000    Median :2.000   Median :2.000  
+ Mean   :1.999       Mean   :2.199    Mean   :1.789   Mean   :1.625  
+ 3rd Qu.:3.000       3rd Qu.:3.000    3rd Qu.:2.000   3rd Qu.:2.000  
+ Max.   :3.000       Max.   :3.000    Max.   :2.000   Max.   :2.000  
+ personal_loan   investment_account insurance_product active_products
+ Min.   :1.000   Min.   :1.000      Min.   :1.000     Min.   :1.000  
+ 1st Qu.:1.000   1st Qu.:1.000      1st Qu.:1.000     1st Qu.:1.000  
+ Median :1.000   Median :1.000      Median :1.000     Median :1.000  
+ Mean   :1.316   Mean   :1.426      Mean   :1.212     Mean   :1.297  
+ 3rd Qu.:2.000   3rd Qu.:2.000      3rd Qu.:1.000     3rd Qu.:2.000  
+ Max.   :2.000   Max.   :2.000      Max.   :2.000     Max.   :2.000  
+ feature_diversity bill_payment_user auto_savings_enabled
+ Min.   :1.00      Min.   :1.000     Min.   :1.000       
+ 1st Qu.:1.00      1st Qu.:1.000     1st Qu.:1.000       
+ Median :1.00      Median :2.000     Median :1.000       
+ Mean   :1.45      Mean   :1.701     Mean   :1.401       
+ 3rd Qu.:2.00      3rd Qu.:2.000     3rd Qu.:2.000       
+ Max.   :3.00      Max.   :2.000     Max.   :2.000       
+ international_transactions satisfaction_score  clv_segment 
+ Min.   :1.00               Min.   :1.00       Min.   :1.0  
+ 1st Qu.:1.00               1st Qu.:2.00       1st Qu.:1.0  
+ Median :2.00               Median :2.00       Median :1.0  
+ Mean   :1.61               Mean   :1.91       Mean   :1.5  
+ 3rd Qu.:2.00               3rd Qu.:2.00       3rd Qu.:2.0  
+ Max.   :2.00               Max.   :3.00       Max.   :2.0  
+ total_transaction_volume churn_probability transaction_frequency
+ Min.   :1.000            Min.   :1.000     Min.   :1.000        
+ 1st Qu.:1.000            1st Qu.:2.000     1st Qu.:1.000        
+ Median :1.000            Median :2.000     Median :1.000        
+ Mean   :1.317            Mean   :1.761     Mean   :1.021        
+ 3rd Qu.:2.000            3rd Qu.:2.000     3rd Qu.:1.000        
+ Max.   :3.000            Max.   :2.000     Max.   :3.000        
+ preferred_transaction_type customer_lifetime_value user_tenure_days
+ Min.   :1.000              Min.   :1.000           Min.   :2.000   
+ 1st Qu.:2.000              1st Qu.:2.000           1st Qu.:3.000   
+ Median :2.000              Median :2.000           Median :3.000   
+ Mean   :1.786              Mean   :1.933           Mean   :2.922   
+ 3rd Qu.:2.000              3rd Qu.:2.000           3rd Qu.:3.000   
+ Max.   :2.000              Max.   :3.000           Max.   :3.000   
+ days_since_last_tx
+ Min.   :1.000     
+ 1st Qu.:1.000     
+ Median :2.000     
+ Mean   :1.762     
+ 3rd Qu.:2.000     
+ Max.   :3.000     </code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"</span><span class="sc">\n</span><span class="st">Original dataset size (Raw): "</span>, <span class="fu">nrow</span>(df_engineered), <span class="st">"</span><span class="sc">\n</span><span class="st">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Original dataset size (Raw):  48723 </code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"Processed dataset size (LCA Final): "</span>, <span class="fu">nrow</span>(df_lca_final), <span class="st">"</span><span class="sc">\n</span><span class="st">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Processed dataset size (LCA Final):  48723 </code></pre>
+</div>
+</div>
 </section>
 </section>
 <section id="cluster-analysis" class="level2">
 <h2 class="anchored" data-anchor-id="cluster-analysis">Cluster Analysis</h2>
+<section id="latent-class-analysis" class="level3">
+<h3 class="anchored" data-anchor-id="latent-class-analysis">Latent Class Analysis</h3>
+<p>LCA is chosen because it is a probability-based method specifically designed for categorical data. While traditional methods like K-Means rely on physical distance between numerical points, LCA identifies hidden segments based on the likelihood of shared behavioral and demographic patterns. This makes it the most effective tool for our dataset, as it allows us to group customers into distinct, actionable categories that align with business logic.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(poLCA)</span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a>f <span class="ot">&lt;-</span> <span class="fu">as.formula</span>(<span class="fu">cbind</span>(age, income_bracket, education_level, household_size, acquisition_channel,</span>
+<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a>                      customer_segment, savings_account, credit_card, personal_loan, </span>
+<span id="cb16-5"><a href="#cb16-5" aria-hidden="true" tabindex="-1"></a>                      investment_account, insurance_product, active_products, </span>
+<span id="cb16-6"><a href="#cb16-6" aria-hidden="true" tabindex="-1"></a>                      feature_diversity, bill_payment_user, </span>
+<span id="cb16-7"><a href="#cb16-7" aria-hidden="true" tabindex="-1"></a>                      auto_savings_enabled, international_transactions, satisfaction_score, </span>
+<span id="cb16-8"><a href="#cb16-8" aria-hidden="true" tabindex="-1"></a>                      clv_segment, total_transaction_volume, </span>
+<span id="cb16-9"><a href="#cb16-9" aria-hidden="true" tabindex="-1"></a>                      transaction_frequency, preferred_transaction_type, </span>
+<span id="cb16-10"><a href="#cb16-10" aria-hidden="true" tabindex="-1"></a>                      customer_lifetime_value, user_tenure_days, days_since_last_tx, churn_probability) <span class="sc">~</span> <span class="dv">1</span>)</span>
+<span id="cb16-11"><a href="#cb16-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-12"><a href="#cb16-12" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">1234</span>)</span>
+<span id="cb16-13"><a href="#cb16-13" aria-hidden="true" tabindex="-1"></a>LCA_6 <span class="ot">&lt;-</span> <span class="fu">poLCA</span>(f, <span class="at">data =</span> df_lca_final, <span class="at">nclass =</span> <span class="dv">6</span>, <span class="at">nrep =</span> <span class="dv">5</span>, <span class="at">maxiter =</span> <span class="dv">5000</span>, <span class="at">verbose =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb16-14"><a href="#cb16-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-15"><a href="#cb16-15" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(LCA_6)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Conditional item response (column) probabilities,
+ by outcome variable, for each class (row) 
+ 
+$age
+           Pr(1)  Pr(2)  Pr(3)
+class 1:  0.4921 0.2813 0.2266
+class 2:  0.4856 0.3041 0.2104
+class 3:  0.5060 0.3792 0.1148
+class 4:  0.1362 0.3483 0.5155
+class 5:  0.1870 0.5131 0.2999
+class 6:  0.1382 0.2974 0.5644
+
+$income_bracket
+           Pr(1)  Pr(2)  Pr(3)
+class 1:  0.0465 0.5257 0.4278
+class 2:  0.0418 0.5337 0.4246
+class 3:  0.0413 0.5384 0.4203
+class 4:  0.6258 0.0240 0.3502
+class 5:  0.5348 0.0501 0.4151
+class 6:  0.6020 0.0271 0.3710
+
+$education_level
+           Pr(1)  Pr(2)  Pr(3)
+class 1:  0.3565 0.5821 0.0614
+class 2:  0.3656 0.5768 0.0575
+class 3:  0.3568 0.5817 0.0616
+class 4:  0.4586 0.1662 0.3752
+class 5:  0.4543 0.1767 0.3690
+class 6:  0.4539 0.1917 0.3543
+
+$household_size
+           Pr(1)  Pr(2)  Pr(3)
+class 1:  0.2865 0.6018 0.1117
+class 2:  0.2929 0.5988 0.1083
+class 3:  0.2880 0.6055 0.1065
+class 4:  0.2939 0.5982 0.1078
+class 5:  0.2878 0.6113 0.1010
+class 6:  0.2878 0.6054 0.1068
+
+$acquisition_channel
+           Pr(1)  Pr(2)  Pr(3)
+class 1:  0.3938 0.1999 0.4063
+class 2:  0.4087 0.2011 0.3902
+class 3:  0.3966 0.2048 0.3986
+class 4:  0.4006 0.2053 0.3941
+class 5:  0.4049 0.1901 0.4051
+class 6:  0.3998 0.1976 0.4026
+
+$customer_segment
+           Pr(1)  Pr(2)  Pr(3)
+class 1:  0.0000 0.8412 0.1588
+class 2:  0.2333 0.2876 0.4791
+class 3:  0.0731 0.6638 0.2632
+class 4:  0.0000 1.0000 0.0000
+class 5:  0.1598 0.3999 0.4403
+class 6:  0.1641 0.3330 0.5029
+
+$savings_account
+           Pr(1)  Pr(2)
+class 1:  0.3851 0.6149
+class 2:  0.3715 0.6285
+class 3:  0.3907 0.6093
+class 4:  0.0078 0.9922
+class 5:  0.0265 0.9735
+class 6:  0.0079 0.9921
+
+$credit_card
+           Pr(1)  Pr(2)
+class 1:  0.5747 0.4253
+class 2:  0.5636 0.4364
+class 3:  0.5659 0.4341
+class 4:  0.1432 0.8568
+class 5:  0.1740 0.8260
+class 6:  0.1430 0.8570
+
+$personal_loan
+           Pr(1)  Pr(2)
+class 1:  0.7928 0.2072
+class 2:  0.7896 0.2104
+class 3:  0.7843 0.2157
+class 4:  0.5685 0.4315
+class 5:  0.5640 0.4360
+class 6:  0.5524 0.4476
+
+$investment_account
+           Pr(1)  Pr(2)
+class 1:  0.7138 0.2862
+class 2:  0.7159 0.2841
+class 3:  0.7096 0.2904
+class 4:  0.4108 0.5892
+class 5:  0.4268 0.5732
+class 6:  0.4072 0.5928
+
+$insurance_product
+           Pr(1)  Pr(2)
+class 1:  0.8667 0.1333
+class 2:  0.8576 0.1424
+class 3:  0.8553 0.1447
+class 4:  0.7010 0.2990
+class 5:  0.7082 0.2918
+class 6:  0.7019 0.2981
+
+$active_products
+           Pr(1)  Pr(2)
+class 1:  0.9225 0.0775
+class 2:  0.9231 0.0769
+class 3:  0.0191 0.9809
+class 4:  0.7519 0.2481
+class 5:  0.0666 0.9334
+class 6:  0.8809 0.1191
+
+$feature_diversity
+           Pr(1)  Pr(2)  Pr(3)
+class 1:  0.7770 0.2221 0.0010
+class 2:  0.7819 0.2174 0.0007
+class 3:  0.7822 0.2173 0.0005
+class 4:  0.3158 0.6508 0.0334
+class 5:  0.3274 0.6377 0.0349
+class 6:  0.3117 0.6533 0.0350
+
+$bill_payment_user
+           Pr(1)  Pr(2)
+class 1:  0.3058 0.6942
+class 2:  0.3018 0.6982
+class 3:  0.2984 0.7016
+class 4:  0.2978 0.7022
+class 5:  0.2905 0.7095
+class 6:  0.2922 0.7078
+
+$auto_savings_enabled
+           Pr(1)  Pr(2)
+class 1:  0.5914 0.4086
+class 2:  0.6148 0.3852
+class 3:  0.5877 0.4123
+class 4:  0.6002 0.3998
+class 5:  0.6026 0.3974
+class 6:  0.5966 0.4034
+
+$international_transactions
+           Pr(1)  Pr(2)
+class 1:  0.3905 0.6095
+class 2:  0.3905 0.6095
+class 3:  0.3934 0.6066
+class 4:  0.3907 0.6093
+class 5:  0.3799 0.6201
+class 6:  0.3883 0.6117
+
+$satisfaction_score
+           Pr(1)  Pr(2)  Pr(3)
+class 1:  0.1350 0.8631 0.0019
+class 2:  0.0967 0.8994 0.0038
+class 3:  0.0775 0.9179 0.0046
+class 4:  0.0882 0.9077 0.0041
+class 5:  0.0442 0.9467 0.0092
+class 6:  0.0819 0.9123 0.0058
+
+$clv_segment
+           Pr(1)  Pr(2)
+class 1:  0.9236 0.0764
+class 2:  0.0145 0.9855
+class 3:  0.5688 0.4312
+class 4:  0.9438 0.0562
+class 5:  0.2292 0.7708
+class 6:  0.1708 0.8292
+
+$total_transaction_volume
+           Pr(1)  Pr(2)  Pr(3)
+class 1:  0.7039 0.2672 0.0289
+class 2:  0.7171 0.2585 0.0244
+class 3:  0.7143 0.2621 0.0236
+class 4:  0.7151 0.2606 0.0243
+class 5:  0.7015 0.2736 0.0249
+class 6:  0.7059 0.2641 0.0299
+
+$transaction_frequency
+           Pr(1)  Pr(2)  Pr(3)
+class 1:  0.9783 0.0201 0.0016
+class 2:  0.9818 0.0173 0.0009
+class 3:  0.9834 0.0156 0.0010
+class 4:  0.9815 0.0165 0.0019
+class 5:  0.9820 0.0163 0.0017
+class 6:  0.9794 0.0190 0.0016
+
+$preferred_transaction_type
+           Pr(1)  Pr(2)
+class 1:  0.2146 0.7854
+class 2:  0.2195 0.7805
+class 3:  0.2175 0.7825
+class 4:  0.2108 0.7892
+class 5:  0.2059 0.7941
+class 6:  0.2138 0.7862
+
+$customer_lifetime_value
+           Pr(1)  Pr(2)  Pr(3)
+class 1:  0.3573 0.6427 0.0000
+class 2:  0.0002 0.6720 0.3278
+class 3:  0.2226 0.6737 0.1037
+class 4:  0.5500 0.4500 0.0000
+class 5:  0.0087 0.7614 0.2299
+class 6:  0.0001 0.7852 0.2147
+
+$user_tenure_days
+          Pr(1)  Pr(2)  Pr(3)
+class 1:      0 0.1059 0.8941
+class 2:      0 0.0455 0.9545
+class 3:      0 0.0797 0.9203
+class 4:      0 0.1015 0.8985
+class 5:      0 0.0577 0.9423
+class 6:      0 0.0627 0.9373
+
+$days_since_last_tx
+           Pr(1)  Pr(2)  Pr(3)
+class 1:  0.4262 0.3780 0.1958
+class 2:  0.4233 0.3804 0.1963
+class 3:  0.4274 0.3800 0.1926
+class 4:  0.4268 0.3815 0.1916
+class 5:  0.4311 0.3784 0.1905
+class 6:  0.4406 0.3758 0.1836
+
+$churn_probability
+           Pr(1)  Pr(2)
+class 1:  0.0084 0.9916
+class 2:  0.0237 0.9763
+class 3:  1.0000 0.0000
+class 4:  0.1586 0.8414
+class 5:  1.0000 0.0000
+class 6:  0.0000 1.0000
+
+Estimated class population shares 
+ 0.2273 0.1855 0.1258 0.1713 0.08 0.2102 
+ 
+Predicted class memberships (by modal posterior prob.) 
+ 0.2176 0.1941 0.1276 0.1733 0.0816 0.2058 
+ 
+========================================================= 
+Fit for 6 latent classes: 
+========================================================= 
+number of observations: 48723 
+number of estimated parameters: 233 
+residual degrees of freedom: 48490 
+maximum log-likelihood: -802207.6 
+ 
+AIC(6): 1604881
+BIC(6): 1606930
+G^2(6): 554929.2 (Likelihood ratio/deviance statistic) 
+X^2(6): 5937697252 (Chi-square goodness of fit) 
+ </code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb18"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="co"># --- Business Label Reference ---</span></span>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a><span class="fu">lapply</span>(df_labeled, levels)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>$age
+[1] "Young"     "MiddleAge" "Senior"   
+
+$income_bracket
+[1] "High"   "Low"    "Medium"
+
+$education_level
+[1] "Bachelor"    "High School" "Postgrad"   
+
+$household_size
+[1] "Small"  "Medium" "Large" 
+
+$acquisition_channel
+[1] "Organic"  "Paid Ad"  "Indirect"
+
+$customer_segment
+[1] "High_Use" "Low_Use"  "Mid_Use" 
+
+$savings_account
+[1] "No"  "Yes"
+
+$credit_card
+[1] "No"  "Yes"
+
+$personal_loan
+[1] "No"  "Yes"
+
+$investment_account
+[1] "No"  "Yes"
+
+$insurance_product
+[1] "No"  "Yes"
+
+$active_products
+[1] "Low_Holdings"  "High_Holdings"
+
+$feature_diversity
+[1] "Basic"        "Intermediate" "Power"       
+
+$bill_payment_user
+[1] "No"  "Yes"
+
+$auto_savings_enabled
+[1] "No"  "Yes"
+
+$international_transactions
+[1] "Has_International" "None"             
+
+$satisfaction_score
+[1] "Dissatisfied" "Neutral"      "Satisfied"   
+
+$clv_segment
+[1] "Standard"   "High_Value"
+
+$total_transaction_volume
+[1] "Mass_Volume"  "High_Volume"  "Whale_Volume"
+
+$churn_probability
+[1] "Safe"      "Concern"   "High_Risk"
+
+$transaction_frequency
+[1] "Infrequent" "Regular"    "Power_User"
+
+$preferred_transaction_type
+[1] "Inflow_Eco"       "Outflow_Transfer"
+
+$customer_lifetime_value
+[1] "Low_CLV"  "Mid_CLV"  "High_CLV"
+
+$user_tenure_days
+[1] "New_User"   "Developing" "Loyal_User"
+
+$days_since_last_tx
+[1] "Active_Recent"    "Warning_At_Risk"  "Churned_Inactive"</code></pre>
+</div>
+</div>
+</section>
+<section id="predicted-cluster-distribution" class="level3">
+<h3 class="anchored" data-anchor-id="predicted-cluster-distribution">Predicted cluster distribution</h3>
+<p>This section visualizes the relative size of each identified customer groups.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb20"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggplot2)</span>
+<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(dplyr)</span>
+<span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(scales)</span>
+<span id="cb20-4"><a href="#cb20-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-5"><a href="#cb20-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-6"><a href="#cb20-6" aria-hidden="true" tabindex="-1"></a>df_labeled<span class="sc">$</span>cluster <span class="ot">&lt;-</span> <span class="fu">as.factor</span>(LCA_6<span class="sc">$</span>predclass)</span>
+<span id="cb20-7"><a href="#cb20-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-8"><a href="#cb20-8" aria-hidden="true" tabindex="-1"></a>counts <span class="ot">&lt;-</span> <span class="fu">table</span>(df_labeled<span class="sc">$</span>cluster)</span>
+<span id="cb20-9"><a href="#cb20-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-10"><a href="#cb20-10" aria-hidden="true" tabindex="-1"></a>prop_data <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
+<span id="cb20-11"><a href="#cb20-11" aria-hidden="true" tabindex="-1"></a>  <span class="at">ID =</span> <span class="fu">names</span>(counts),</span>
+<span id="cb20-12"><a href="#cb20-12" aria-hidden="true" tabindex="-1"></a>  <span class="at">Value =</span> <span class="fu">as.numeric</span>(counts),</span>
+<span id="cb20-13"><a href="#cb20-13" aria-hidden="true" tabindex="-1"></a>  <span class="at">stringsAsFactors =</span> <span class="cn">FALSE</span></span>
+<span id="cb20-14"><a href="#cb20-14" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb20-15"><a href="#cb20-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-16"><a href="#cb20-16" aria-hidden="true" tabindex="-1"></a>prop_data<span class="sc">$</span>Percentage <span class="ot">&lt;-</span> prop_data<span class="sc">$</span>Value <span class="sc">/</span> <span class="fu">sum</span>(prop_data<span class="sc">$</span>Value)</span>
+<span id="cb20-17"><a href="#cb20-17" aria-hidden="true" tabindex="-1"></a>prop_data<span class="sc">$</span>Legend_Label <span class="ot">&lt;-</span> <span class="fu">paste0</span>(</span>
+<span id="cb20-18"><a href="#cb20-18" aria-hidden="true" tabindex="-1"></a>  <span class="st">"Cluster "</span>, prop_data<span class="sc">$</span>ID, </span>
+<span id="cb20-19"><a href="#cb20-19" aria-hidden="true" tabindex="-1"></a>  <span class="st">" ("</span>, scales<span class="sc">::</span><span class="fu">percent</span>(prop_data<span class="sc">$</span>Percentage, <span class="at">accuracy =</span> <span class="fl">0.1</span>), <span class="st">")"</span></span>
+<span id="cb20-20"><a href="#cb20-20" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb20-21"><a href="#cb20-21" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-22"><a href="#cb20-22" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggplot2)</span>
+<span id="cb20-23"><a href="#cb20-23" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(prop_data, <span class="fu">aes</span>(<span class="at">x =</span> <span class="dv">2</span>, <span class="at">y =</span> Percentage, <span class="at">fill =</span> ID)) <span class="sc">+</span></span>
+<span id="cb20-24"><a href="#cb20-24" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_bar</span>(<span class="at">stat =</span> <span class="st">"identity"</span>, <span class="at">width =</span> <span class="fl">0.8</span>, <span class="at">color =</span> <span class="st">"white"</span>) <span class="sc">+</span></span>
+<span id="cb20-25"><a href="#cb20-25" aria-hidden="true" tabindex="-1"></a>  <span class="fu">coord_polar</span>(<span class="at">theta =</span> <span class="st">"y"</span>, <span class="at">start =</span> <span class="dv">0</span>) <span class="sc">+</span></span>
+<span id="cb20-26"><a href="#cb20-26" aria-hidden="true" tabindex="-1"></a>  <span class="fu">xlim</span>(<span class="fl">0.5</span>, <span class="fl">2.5</span>) <span class="sc">+</span> </span>
+<span id="cb20-27"><a href="#cb20-27" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_fill_discrete</span>(<span class="at">labels =</span> prop_data<span class="sc">$</span>Legend_Label) <span class="sc">+</span></span>
+<span id="cb20-28"><a href="#cb20-28" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_void</span>() <span class="sc">+</span></span>
+<span id="cb20-29"><a href="#cb20-29" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(</span>
+<span id="cb20-30"><a href="#cb20-30" aria-hidden="true" tabindex="-1"></a>    <span class="at">legend.position =</span> <span class="st">"right"</span>,</span>
+<span id="cb20-31"><a href="#cb20-31" aria-hidden="true" tabindex="-1"></a>    <span class="at">plot.title =</span> <span class="fu">element_text</span>(<span class="at">hjust =</span> <span class="fl">0.5</span>, <span class="at">face =</span> <span class="st">"bold"</span>, <span class="at">size =</span> <span class="dv">14</span>)</span>
+<span id="cb20-32"><a href="#cb20-32" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">+</span></span>
+<span id="cb20-33"><a href="#cb20-33" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(</span>
+<span id="cb20-34"><a href="#cb20-34" aria-hidden="true" tabindex="-1"></a>    <span class="at">title =</span> <span class="st">"Cluster Distribution (Predicted)"</span>,</span>
+<span id="cb20-35"><a href="#cb20-35" aria-hidden="true" tabindex="-1"></a>    <span class="at">fill =</span> <span class="st">"Segments"</span></span>
+<span id="cb20-36"><a href="#cb20-36" aria-hidden="true" tabindex="-1"></a>  )</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="TakeHomeExercise2_files/figure-html/unnamed-chunk-9-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="assess-aic-bic-entropy" class="level3">
+<h3 class="anchored" data-anchor-id="assess-aic-bic-entropy">Assess AIC, BIC, Entropy</h3>
+<p>To ensure the statistical validity of the model, we assess key metrics AIC, BIC, and Entropy.</p>
+<ul>
+<li><p>AIC &amp; BIC (Information Criteria): These metrics evaluate the balance between model fit and complexity. Lower values generally indicate a more optimal model that explains the data well without overfitting.</p></li>
+<li><p>Entropy: This measures classification precision. It indicates how distinctly the model separates individuals into clusters. Values range from 0 to 1, where higher score represents high certainty and minimal overlap between groups.</p></li>
+</ul>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb21"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a>calculate_entropy <span class="ot">&lt;-</span> <span class="cf">function</span>(model) {</span>
+<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a>  error_prior <span class="ot">&lt;-</span> <span class="sc">-</span><span class="fu">sum</span>(model<span class="sc">$</span>P <span class="sc">*</span> <span class="fu">log</span>(model<span class="sc">$</span>P))</span>
+<span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb21-4"><a href="#cb21-4" aria-hidden="true" tabindex="-1"></a>  entropy_obs <span class="ot">&lt;-</span> <span class="cf">function</span>(p) {</span>
+<span id="cb21-5"><a href="#cb21-5" aria-hidden="true" tabindex="-1"></a>    p <span class="ot">&lt;-</span> p[p <span class="sc">&gt;</span> <span class="dv">0</span>] </span>
+<span id="cb21-6"><a href="#cb21-6" aria-hidden="true" tabindex="-1"></a>    <span class="fu">return</span>(<span class="sc">-</span><span class="fu">sum</span>(p <span class="sc">*</span> <span class="fu">log</span>(p)))</span>
+<span id="cb21-7"><a href="#cb21-7" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb21-8"><a href="#cb21-8" aria-hidden="true" tabindex="-1"></a>  error_post <span class="ot">&lt;-</span> <span class="fu">mean</span>(<span class="fu">apply</span>(model<span class="sc">$</span>posterior, <span class="dv">1</span>, entropy_obs))</span>
+<span id="cb21-9"><a href="#cb21-9" aria-hidden="true" tabindex="-1"></a>  lca_entropy <span class="ot">&lt;-</span> (error_prior <span class="sc">-</span> error_post) <span class="sc">/</span> error_prior</span>
+<span id="cb21-10"><a href="#cb21-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">return</span>(lca_entropy)</span>
+<span id="cb21-11"><a href="#cb21-11" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb21-12"><a href="#cb21-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-13"><a href="#cb21-13" aria-hidden="true" tabindex="-1"></a>entropy_val <span class="ot">&lt;-</span> <span class="fu">calculate_entropy</span>(LCA_6)</span>
+<span id="cb21-14"><a href="#cb21-14" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"AIC:"</span>, LCA_6<span class="sc">$</span>aic, <span class="st">" | BIC:"</span>, LCA_6<span class="sc">$</span>bic, <span class="st">" | Entropy:"</span>, entropy_val, <span class="st">"</span><span class="sc">\n</span><span class="st">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>AIC: 1604881  | BIC: 1606930  | Entropy: 0.8248245 </code></pre>
+</div>
+</div>
+</section>
+</section>
+<section id="customer-profile-visualization" class="level2">
+<h2 class="anchored" data-anchor-id="customer-profile-visualization">Customer Profile Visualization</h2>
+<p>To interpret and visualize the different classes of the LCA model, we come out with heat map and stacked bar chart to map cluster assignments against behavioral and demographic indicators.</p>
+<section id="feature-intensity-heatmap" class="level3">
+<h3 class="anchored" data-anchor-id="feature-intensity-heatmap">Feature Intensity Heatmap</h3>
+<p>The heatmap provides a visual comparison of how each cluster performs across key metrics.</p>
+<ul>
+<li>Logic: To compare clusters, we convert categorical labels into numerical ranks and calculate the mean “level” for each group. Because these raw averages often fall into narrow ranges, subtle differences can be difficult to see on a standard scale. We apply 0-1 scaling to magnify the relative performance and highlights the difference.</li>
+<li>Layout: The X-axis follows the order of selected variables (priority indicators), while the Y-axis (Clusters) is sorted by a selected metric, such as churn_probability, to create a clear value-based hierarchy.</li>
+<li>Interpretation: Darker blue represents a higher concentration of “top-tier” traits, such as higher spending, longer tenure, or greater satisfaction.</li>
+</ul>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb23"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="co"># ==============================================================================</span></span>
+<span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a><span class="co"># Heatmap </span></span>
+<span id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a><span class="co"># ==============================================================================</span></span>
+<span id="cb23-4"><a href="#cb23-4" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggplot2)</span>
+<span id="cb23-5"><a href="#cb23-5" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(dplyr)</span>
+<span id="cb23-6"><a href="#cb23-6" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyr)</span>
+<span id="cb23-7"><a href="#cb23-7" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(plotly) <span class="co"># used for plotting charts</span></span>
+<span id="cb23-8"><a href="#cb23-8" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(scales) <span class="co"># used for percentage presentation</span></span>
+<span id="cb23-9"><a href="#cb23-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-10"><a href="#cb23-10" aria-hidden="true" tabindex="-1"></a><span class="co"># map the Cluster IDs back to the descriptive dataset (df_labeled)</span></span>
+<span id="cb23-11"><a href="#cb23-11" aria-hidden="true" tabindex="-1"></a>df_labeled<span class="sc">$</span>cluster <span class="ot">&lt;-</span> <span class="fu">factor</span>(LCA_6<span class="sc">$</span>predclass)</span>
+<span id="cb23-12"><a href="#cb23-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-13"><a href="#cb23-13" aria-hidden="true" tabindex="-1"></a><span class="co"># select your interested indicators</span></span>
+<span id="cb23-14"><a href="#cb23-14" aria-hidden="true" tabindex="-1"></a><span class="co"># X-axis order: display order consistent with input order, with most interested ones on the left</span></span>
+<span id="cb23-15"><a href="#cb23-15" aria-hidden="true" tabindex="-1"></a>selected_vars <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"churn_probability"</span>, <span class="st">"customer_lifetime_value"</span>, </span>
+<span id="cb23-16"><a href="#cb23-16" aria-hidden="true" tabindex="-1"></a>                   <span class="st">"total_transaction_volume"</span>, <span class="st">"user_tenure_days"</span>, <span class="st">"days_since_last_tx"</span>)</span>
+<span id="cb23-17"><a href="#cb23-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-18"><a href="#cb23-18" aria-hidden="true" tabindex="-1"></a><span class="co"># calculate average value, then rescale value to [0,1] to show group difference </span></span>
+<span id="cb23-19"><a href="#cb23-19" aria-hidden="true" tabindex="-1"></a>heatmap_data <span class="ot">&lt;-</span> df_labeled <span class="sc">%&gt;%</span></span>
+<span id="cb23-20"><a href="#cb23-20" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(cluster) <span class="sc">%&gt;%</span></span>
+<span id="cb23-21"><a href="#cb23-21" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="fu">across</span>(<span class="fu">all_of</span>(selected_vars), </span>
+<span id="cb23-22"><a href="#cb23-22" aria-hidden="true" tabindex="-1"></a>                   <span class="sc">~</span> <span class="fu">mean</span>(<span class="fu">as.numeric</span>(<span class="fu">as.factor</span>(.x)), <span class="at">na.rm =</span> <span class="cn">TRUE</span>))) <span class="sc">%&gt;%</span></span>
+<span id="cb23-23"><a href="#cb23-23" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="fu">across</span>(<span class="sc">-</span>cluster, <span class="sc">~</span> <span class="fu">as.vector</span>(scales<span class="sc">::</span><span class="fu">rescale</span>(.)))) <span class="sc">%&gt;%</span> <span class="co"># rescale</span></span>
+<span id="cb23-24"><a href="#cb23-24" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pivot_longer</span>(<span class="sc">-</span>cluster, <span class="at">names_to =</span> <span class="st">"Variable"</span>, <span class="at">values_to =</span> <span class="st">"Intensity"</span>)</span>
+<span id="cb23-25"><a href="#cb23-25" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-26"><a href="#cb23-26" aria-hidden="true" tabindex="-1"></a><span class="co"># Y-axis order: user can select to sort classes based on most care indicator, here we take churn_probability as example</span></span>
+<span id="cb23-27"><a href="#cb23-27" aria-hidden="true" tabindex="-1"></a>cluster_order <span class="ot">&lt;-</span> heatmap_data <span class="sc">%&gt;%</span></span>
+<span id="cb23-28"><a href="#cb23-28" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(Variable <span class="sc">==</span> <span class="st">"churn_probability"</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb23-29"><a href="#cb23-29" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(<span class="fu">desc</span>(Intensity)) <span class="sc">%&gt;%</span> </span>
+<span id="cb23-30"><a href="#cb23-30" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pull</span>(cluster)</span>
+<span id="cb23-31"><a href="#cb23-31" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-32"><a href="#cb23-32" aria-hidden="true" tabindex="-1"></a><span class="co"># apply heat map with selected X-axis, Y-axis order</span></span>
+<span id="cb23-33"><a href="#cb23-33" aria-hidden="true" tabindex="-1"></a>heatmap_data <span class="ot">&lt;-</span> heatmap_data <span class="sc">%&gt;%</span></span>
+<span id="cb23-34"><a href="#cb23-34" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
+<span id="cb23-35"><a href="#cb23-35" aria-hidden="true" tabindex="-1"></a>    <span class="at">Variable =</span> <span class="fu">factor</span>(Variable, <span class="at">levels =</span> selected_vars),</span>
+<span id="cb23-36"><a href="#cb23-36" aria-hidden="true" tabindex="-1"></a>    <span class="at">cluster =</span> <span class="fu">factor</span>(cluster, <span class="at">levels =</span> <span class="fu">rev</span>(cluster_order)) </span>
+<span id="cb23-37"><a href="#cb23-37" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb23-38"><a href="#cb23-38" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-39"><a href="#cb23-39" aria-hidden="true" tabindex="-1"></a><span class="co"># draw heat map</span></span>
+<span id="cb23-40"><a href="#cb23-40" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(heatmap_data, <span class="fu">aes</span>(<span class="at">x =</span> Variable, <span class="at">y =</span> cluster, <span class="at">fill =</span> Intensity)) <span class="sc">+</span></span>
+<span id="cb23-41"><a href="#cb23-41" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_tile</span>(<span class="at">color =</span> <span class="st">"gray90"</span>, <span class="at">linewidth =</span> <span class="fl">0.5</span>) <span class="sc">+</span></span>
+<span id="cb23-42"><a href="#cb23-42" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb23-43"><a href="#cb23-43" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_fill_gradient</span>(<span class="at">low =</span> <span class="st">"white"</span>, <span class="at">high =</span> <span class="st">"#2C6BAA"</span>) <span class="sc">+</span></span>
+<span id="cb23-44"><a href="#cb23-44" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb23-45"><a href="#cb23-45" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Customer Profiles (Relative Intensity)"</span>,</span>
+<span id="cb23-46"><a href="#cb23-46" aria-hidden="true" tabindex="-1"></a>       <span class="at">subtitle =</span> <span class="st">"Colors represent relative ranking across clusters</span><span class="sc">\n</span><span class="st">Clusters ranked by total_transaction_volume; Columns in input order"</span>,</span>
+<span id="cb23-47"><a href="#cb23-47" aria-hidden="true" tabindex="-1"></a>       <span class="at">x =</span> <span class="st">"Selected Indicators"</span>, </span>
+<span id="cb23-48"><a href="#cb23-48" aria-hidden="true" tabindex="-1"></a>       <span class="at">y =</span> <span class="st">"Clusters"</span>,</span>
+<span id="cb23-49"><a href="#cb23-49" aria-hidden="true" tabindex="-1"></a>       <span class="at">fill =</span> <span class="st">"Relative Score"</span>) <span class="sc">+</span></span>
+<span id="cb23-50"><a href="#cb23-50" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb23-51"><a href="#cb23-51" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>() <span class="sc">+</span></span>
+<span id="cb23-52"><a href="#cb23-52" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(</span>
+<span id="cb23-53"><a href="#cb23-53" aria-hidden="true" tabindex="-1"></a>    <span class="at">axis.text.x =</span> <span class="fu">element_text</span>(<span class="at">angle =</span> <span class="dv">45</span>, <span class="at">hjust =</span> <span class="dv">1</span>, <span class="at">color =</span> <span class="st">"black"</span>, <span class="at">size =</span> <span class="dv">10</span>),</span>
+<span id="cb23-54"><a href="#cb23-54" aria-hidden="true" tabindex="-1"></a>    <span class="at">axis.text.y =</span> <span class="fu">element_text</span>(<span class="at">color =</span> <span class="st">"black"</span>, <span class="at">size =</span> <span class="dv">10</span>),</span>
+<span id="cb23-55"><a href="#cb23-55" aria-hidden="true" tabindex="-1"></a>    <span class="at">panel.grid =</span> <span class="fu">element_blank</span>(),</span>
+<span id="cb23-56"><a href="#cb23-56" aria-hidden="true" tabindex="-1"></a>    <span class="at">plot.title =</span> <span class="fu">element_text</span>(<span class="at">face =</span> <span class="st">"bold"</span>, <span class="at">size =</span> <span class="dv">14</span>),</span>
+<span id="cb23-57"><a href="#cb23-57" aria-hidden="true" tabindex="-1"></a>    <span class="at">plot.subtitle =</span> <span class="fu">element_text</span>(<span class="at">size =</span> <span class="dv">11</span>, <span class="at">color =</span> <span class="st">"gray30"</span>)</span>
+<span id="cb23-58"><a href="#cb23-58" aria-hidden="true" tabindex="-1"></a>  )</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="TakeHomeExercise2_files/figure-html/unnamed-chunk-11-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="segment-composition-bar-chart" class="level3">
+<h3 class="anchored" data-anchor-id="segment-composition-bar-chart">Segment Composition Bar Chart</h3>
+<p>To examine the internal distribution of specific variables, we used 100% stacked bar charts.</p>
+<ul>
+<li>Logic: A custom R function generates distributions for any selected variable (e.g., NPS or Income), identifying the exact proportions of customer types within each segment.</li>
+</ul>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb24"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a><span class="co"># ==============================================================================</span></span>
+<span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a><span class="co"># Stacked Bar Chart</span></span>
+<span id="cb24-3"><a href="#cb24-3" aria-hidden="true" tabindex="-1"></a><span class="co"># ==============================================================================</span></span>
+<span id="cb24-4"><a href="#cb24-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Create a function to enable user to pass in any interested indicator to distribution among classes</span></span>
+<span id="cb24-5"><a href="#cb24-5" aria-hidden="true" tabindex="-1"></a>plot_cluster_composition <span class="ot">&lt;-</span> <span class="cf">function</span>(data, target_var, title_name) {</span>
+<span id="cb24-6"><a href="#cb24-6" aria-hidden="true" tabindex="-1"></a>  p <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(data, <span class="fu">aes</span>(<span class="at">x =</span> cluster, <span class="at">fill =</span> <span class="sc">!!</span><span class="fu">sym</span>(target_var))) <span class="sc">+</span></span>
+<span id="cb24-7"><a href="#cb24-7" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_bar</span>(<span class="at">position =</span> <span class="st">"fill"</span>) <span class="sc">+</span></span>
+<span id="cb24-8"><a href="#cb24-8" aria-hidden="true" tabindex="-1"></a>    <span class="fu">scale_y_continuous</span>(<span class="at">labels =</span> percent) <span class="sc">+</span></span>
+<span id="cb24-9"><a href="#cb24-9" aria-hidden="true" tabindex="-1"></a>    <span class="fu">scale_fill_brewer</span>(<span class="at">palette =</span> <span class="st">"Blues"</span>) <span class="sc">+</span></span>
+<span id="cb24-10"><a href="#cb24-10" aria-hidden="true" tabindex="-1"></a>    <span class="fu">labs</span>(<span class="at">title =</span> <span class="fu">paste</span>(title_name, <span class="st">"by Cluster"</span>),</span>
+<span id="cb24-11"><a href="#cb24-11" aria-hidden="true" tabindex="-1"></a>         <span class="at">x =</span> <span class="st">"Cluster ID"</span>,</span>
+<span id="cb24-12"><a href="#cb24-12" aria-hidden="true" tabindex="-1"></a>         <span class="at">y =</span> <span class="st">"Percentage (%)"</span>,</span>
+<span id="cb24-13"><a href="#cb24-13" aria-hidden="true" tabindex="-1"></a>         <span class="at">fill =</span> title_name) <span class="sc">+</span></span>
+<span id="cb24-14"><a href="#cb24-14" aria-hidden="true" tabindex="-1"></a>    <span class="fu">theme_minimal</span>()</span>
+<span id="cb24-15"><a href="#cb24-15" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb24-16"><a href="#cb24-16" aria-hidden="true" tabindex="-1"></a>  <span class="fu">return</span>(p)</span>
+<span id="cb24-17"><a href="#cb24-17" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb24-18"><a href="#cb24-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb24-19"><a href="#cb24-19" aria-hidden="true" tabindex="-1"></a><span class="co"># Example 1：check nps_score </span></span>
+<span id="cb24-20"><a href="#cb24-20" aria-hidden="true" tabindex="-1"></a>p_nps <span class="ot">&lt;-</span> <span class="fu">plot_cluster_composition</span>(df_labeled, <span class="st">"churn_probability"</span>, <span class="st">"Churn Level"</span>)</span>
+<span id="cb24-21"><a href="#cb24-21" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(p_nps)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="TakeHomeExercise2_files/figure-html/unnamed-chunk-12-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb25"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Example 2：check income_bracket </span></span>
+<span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a>p_income <span class="ot">&lt;-</span> <span class="fu">plot_cluster_composition</span>(df_labeled, <span class="st">"income_bracket"</span>, <span class="st">"Income Level"</span>)</span>
+<span id="cb25-3"><a href="#cb25-3" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(p_income)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="TakeHomeExercise2_files/figure-html/unnamed-chunk-12-2.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb26"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a><span class="co"># ------------------------------------------------------------------------------</span></span>
+<span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a><span class="co"># Interactive Plotly</span></span>
+<span id="cb26-3"><a href="#cb26-3" aria-hidden="true" tabindex="-1"></a><span class="co"># ------------------------------------------------------------------------------</span></span>
+<span id="cb26-4"><a href="#cb26-4" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplotly</span>(p_nps)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output-display">
+<div class="plotly html-widget html-fill-item" id="htmlwidget-16e969236431bf933a14" style="width:100%;height:464px;"></div>
+<script type="application/json" data-for="htmlwidget-16e969236431bf933a14">{"x":{"data":[{"orientation":"v","width":[0.89999999999999991,0.90000000000000013,0.90000000000000036,0.90000000000000036,0.90000000000000036],"base":[0.9924535421186681,0.97779892166190929,0,0.86040729339332234,0],"x":[1,2,3,4,5],"y":[0.0075464578813319028,0.022201078338090707,1,0.13959270660667766,1],"text":["count: 0.007546458<br />cluster: 1<br />churn_probability: Safe","count: 0.022201078<br />cluster: 2<br />churn_probability: Safe","count: 1.000000000<br />cluster: 3<br />churn_probability: Safe","count: 0.139592707<br />cluster: 4<br />churn_probability: Safe","count: 1.000000000<br />cluster: 5<br />churn_probability: Safe"],"type":"bar","textposition":"none","marker":{"autocolorscale":false,"color":"rgba(222,235,247,1)","line":{"width":1.8897637795275593,"color":"transparent"}},"name":"Safe","legendgroup":"Safe","showlegend":true,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null},{"orientation":"v","width":[0.89999999999999991,0.90000000000000013,0.90000000000000036,0.90000000000000036],"base":[0,0,0,0],"x":[1,2,4,6],"y":[0.9924535421186681,0.97779892166190929,0.86040729339332234,1],"text":["count: 0.992453542<br />cluster: 1<br />churn_probability: Concern","count: 0.977798922<br />cluster: 2<br />churn_probability: Concern","count: 0.860407293<br />cluster: 4<br />churn_probability: Concern","count: 1.000000000<br />cluster: 6<br />churn_probability: Concern"],"type":"bar","textposition":"none","marker":{"autocolorscale":false,"color":"rgba(158,202,225,1)","line":{"width":1.8897637795275593,"color":"transparent"}},"name":"Concern","legendgroup":"Concern","showlegend":true,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null}],"layout":{"margin":{"t":40.840182648401829,"r":7.3059360730593621,"b":37.260273972602747,"l":48.949771689497723},"paper_bgcolor":"rgba(255,255,255,1)","font":{"color":"rgba(0,0,0,1)","family":"","size":14.611872146118724},"title":{"text":"Churn Level by Cluster","font":{"color":"rgba(0,0,0,1)","family":"","size":17.534246575342465},"x":0,"xref":"paper"},"xaxis":{"domain":[0,1],"automargin":true,"type":"linear","autorange":false,"range":[0.40000000000000002,6.5999999999999996],"tickmode":"array","ticktext":["1","2","3","4","5","6"],"tickvals":[1,2,3,3.9999999999999996,5,6],"categoryorder":"array","categoryarray":["1","2","3","4","5","6"],"nticks":null,"ticks":"","tickcolor":null,"ticklen":3.6529680365296811,"tickwidth":0,"showticklabels":true,"tickfont":{"color":"rgba(77,77,77,1)","family":"","size":11.68949771689498},"tickangle":-0,"showline":false,"linecolor":null,"linewidth":0,"showgrid":true,"gridcolor":"rgba(235,235,235,1)","gridwidth":0.66417600664176002,"zeroline":false,"anchor":"y","title":{"text":"Cluster ID","font":{"color":"rgba(0,0,0,1)","family":"","size":14.611872146118724}},"hoverformat":".2f"},"yaxis":{"domain":[0,1],"automargin":true,"type":"linear","autorange":false,"range":[-0.050000000000000003,1.05],"tickmode":"array","ticktext":["0%","25%","50%","75%","100%"],"tickvals":[0,0.25,0.5,0.75,1],"categoryorder":"array","categoryarray":["0%","25%","50%","75%","100%"],"nticks":null,"ticks":"","tickcolor":null,"ticklen":3.6529680365296811,"tickwidth":0,"showticklabels":true,"tickfont":{"color":"rgba(77,77,77,1)","family":"","size":11.68949771689498},"tickangle":-0,"showline":false,"linecolor":null,"linewidth":0,"showgrid":true,"gridcolor":"rgba(235,235,235,1)","gridwidth":0.66417600664176002,"zeroline":false,"anchor":"x","title":{"text":"Percentage (%)","font":{"color":"rgba(0,0,0,1)","family":"","size":14.611872146118724}},"hoverformat":".2f"},"shapes":[],"showlegend":true,"legend":{"bgcolor":null,"bordercolor":null,"borderwidth":0,"font":{"color":"rgba(0,0,0,1)","family":"","size":11.68949771689498},"title":{"text":"Churn Level","font":{"color":"rgba(0,0,0,1)","family":"","size":14.611872146118724}}},"hovermode":"closest","barmode":"relative"},"config":{"doubleClick":"reset","modeBarButtonsToAdd":["hoverclosest","hovercompare"],"showSendToCloud":false},"source":"A","attrs":{"cce6d353845":{"x":{},"fill":{},"type":"bar"}},"cur_data":"cce6d353845","visdat":{"cce6d353845":["function (y) ","x"]},"highlight":{"on":"plotly_click","persistent":false,"dynamic":false,"selectize":false,"opacityDim":0.20000000000000001,"selected":{"opacity":1},"debounce":0},"shinyEvents":["plotly_hover","plotly_click","plotly_selected","plotly_relayout","plotly_brushed","plotly_brushing","plotly_clickannotation","plotly_doubleclick","plotly_deselect","plotly_afterplot","plotly_sunburstclick"],"base_url":"https://plot.ly"},"evals":[],"jsHooks":[]}</script>
+</div>
+</div>
 
 
+</section>
 </section>
 </section>
 

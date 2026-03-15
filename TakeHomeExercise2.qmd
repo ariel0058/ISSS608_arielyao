@@ -10,23 +10,24 @@ execute:
   freeze: true
 ---
 
-# Prototyping Module for Visual Analytics Shiny Application
+# Overview
 
-## Introduction - Fintech Customer Behaviors in Colombia
+## Introduction to Prototyping Module for Visual Analytics Shiny Application
 Our project dives into the Latin American fintech to understand what drives customer behavior. 
 
-
-In this prototype, I'm using Latent Class Analysis (LCA) to group customers into meaningful personas based on customer behaviors. Users should be able to actively interact with the clustering model, like adjust the number of groups or change the model’s repetitions to see how the customer segments shift. The goal is to let analysts explore their own assumptions about which customers are most loyal and which ones are on the verge of leaving the platform.
+In this prototype, I'm using Latent Class Analysis (LCA) to group customers into meaningful personas based on customer behaviors. Users should be able to actively interact with the clustering model, like select their interested indicators or adjust the number of cluster groups to see how the customer segments shift. The goal is to let analysts explore their own assumptions about which customers are most loyal, valuable and which ones are on the verge of leaving the platform.
 
 ## The Dataset
 We’re using the COFINFAD dataset, which covers 48,723 customers from a major Colombian fintech firm. What makes this data special is that it combines information from different dimensions:
-- Demographics: Basic profiles like age, income, and location.
-- Product Usage: Which services they use, such as credit cards, loans, or insurance.
-- Digital Engagement: How often they log in and which app features they use.
-- Attitudinal Data: Rare metrics like NPS and satisfaction scores.
 
-By using the customer_data.csv file, we have access to 57 variables per user. This allows our clustering model to look at a customer's entire digital and financial footprint, helping us distinguish between different groups—like "power users" versus "casual spenders".
+-   Demographics: Basic profiles like age, income, and location.
+-   Product Usage: Which services they use, such as credit cards, loans, or insurance.
+-   Digital Engagement: How often they log in and which app features they use.
+-   Attitudinal Data: Rare metrics like NPS and satisfaction scores.
 
+By using the customer_data.csv file, we have access to 57 variables per user. This allows our clustering model to look at a customer's entire digital and financial footprint, helping us distinguish between different groups, like "power users" versus "casual spenders".
+
+# Getting Started
 ## Setting the Analytical Tools for Data Wrangling
 
 We load the R packages using the `pacman::p_load()` function:
@@ -34,31 +35,27 @@ We load the R packages using the `pacman::p_load()` function:
 ```{r}
 pacman::p_load(haven, tidyverse, 
                janitor, reshape2,
-               DT, kableExtra, lubridate)
+               DT, kableExtra, lubridate, poLCA)
 ```
 
 ## Data Wrangling
-
-### Data source
-
+### Data Source
 The dataset used in the exercise is behavioral and transactional data retrieved from 48,723 customers of a Colombian fintech company, collected over 12 months from January 4, 2023, to December 29, 2023. The data is from [COFINFAD: Colombian Fintech Financial Analytics Dataset](https://data.mendeley.com/datasets/mhb4zn3258/1)
 
 For this project, we are specifically using the `customer_data.csv` file, which aggregates 54 variables into a single record per user that's proper for LCA clustering. The raw `transactions_data.csv` (transaction level logs) will not be used. 
 
-### Import data
+### Import Data
 First, we import `customer_data.csv` dataset as `customer_raw_data`.
-
 
 ```{r}
 customer_raw_data <- read_csv("data/customer_data.csv",show_col_types = FALSE)
 ```
 
-### Summary of data
+### Summary of Data
 Checking the data structure in the Environment, the `customer_raw_data` has 48723 rows of 54 variables in different data types.
 
-### Check missing values
-We first need to check the missing values as poLCA is sensitive to missing values. By checking the missing values can we decide whether it's proper to include the data into our analysis or if we need to handle it.
-Before proceeding with the clustering, it is important to check missing values, as Latent Class Analysis (LCA) using poLCA is very sensitive to missing data.
+### Check Missing Values
+We first need to check the missing values as poLCA is sensitive to missing values. By checking the missing values we can decide whether to use the data or just drop it.
 
 ```{r} 
 library(tidyverse)
@@ -73,13 +70,11 @@ missing_summary <- customer_raw_data %>%
 # Display variables with missing values
 print(missing_summary)
 ```
-As we can see in the result, complaint_topics, credit_utilization_ratio and feature_requests have missing_percentage of 50%, 37.5% and 33.1% which is quite high, we will filter these variables out from our analysis.
-
-The result shows that several variables have high missing_percentage: complaint_topics (50.0%), credit_utilization_ratio (37.5%), and feature_requests (33.1%). We will remove these three variables together with customer_id which doesn't help in clustering, to ensure the stability and reliability of our analysis.
+As shown in result, `complaint_topics`, `credit_utilization_ratio` and `feature_requests` have quite high missing_percentage of 50%, 37.5% and 33.1%, we will remove these three variables together with `customer_id` which doesn't help in clustering to ensure the stability and reliability of our analysis.
 
 ```{r}
 df_filtered <- customer_raw_data %>%
-  select(
+  dplyr::select(
     # Exclude variables with high missing_percentage
     -complaint_topics, 
     -credit_utilization_ratio, 
@@ -91,24 +86,18 @@ df_filtered <- customer_raw_data %>%
 
 ```
 
-### 2. Filtering data/narrowing down for selected variables for our project use
+### Narrow Down Variables
 In this step, we narrow down our dataset to the most relevant variables for clustering. Inspired by the RFM (Recency, Frequency, Monetary) framework, we transform raw date columns into meaningful behavioral metrics to enhance the model's interpretability:
 
-- Tenure (Loyalty): `user_tenure_days` is calculated as `last_tx - first_tx`, representing the total duration of the customer's active relationship with the fintech.
-- Recency (Activity): `days_since_last_tx` is calculated as the number of days between the dataset's cutoff date and the user's `last_transaction_date`. This helps identify churned vs. active users.
+- Tenure (Loyalty): Created `user_tenure_days` (last vs. first transaction) to measure relationship length.
+- Recency (Activity): Created `days_since_last_tx` to separate active users from churned ones.
 
-High-cardinality geographic data `location` that contains special characters is removed. 
+Key Filters Applied:
 
-Redundant financial metrics `tx_count`, `avg_tx_value` are removed to prevent multicollinearity, `total_tx_volume`, `monthly_transaction_count`, `average_transaction_value`, `avg_daily_transactionsas` are also removed, as `total_transaction_volume` already serves as customer value. 
-
-We also removed some other fields including `marital_status`, `occupation`, `education_level`, `household_size` to simplify the demographic details which we will not focus in this analysis.
-
-`base_satisfaction`, `tx_satisfaction`, `product_satisfaction`, `app_store_rating` are removed as we already have `satisfaction_score` and `nps_score` 作为综合指标了.
-
-`acquisition_channel`, `resolved_tickets_ratio`, `feedback_sentiment` are removed due to they are more related to operational side but in this analysis we focus more on user value.
-
-`churn_probability` is also removed as 这是测试数据自带的预测结果。如果我们把别人已经分好的类放进聚类模型，会干扰我们自己寻找潜在类别的过程。
-
+- Reduce Noise: Dropped `location` and granular demographics like `marital_status` or `occupation` to keep the model focused on financial behavior.
+- Eliminate Redundancy: Removed values such as `tx_count` and `avg_tx_value` to prevent multicollinearity, keeping `total_transaction_volume` to capture historical contribution, `customer_lifetime_value` to account for future profitability, `transaction_frequency` as a measure of user engagement.
+- Consolidate Sentiment: Used `satisfaction_score` and `nps_score` as primary metrics, dropping detailed sub-scores like `app_store_rating`.
+- Avoid Bias: Removed `customer_tenure` and other pre-existing predictions to ensure our LCA model discovers unbiased patterns.
 
 ```{r}
 library(lubridate) # Used for date manipulation
@@ -128,13 +117,8 @@ df_engineered <- df_filtered %>%
   mutate(days_since_last_tx = as.numeric(study_cutoff_date - last_transaction_date)) %>%
   
   # Select final variables and drop redundant columns
-  select(
-    -marital_status, -occupation, -household_size, -gender, -location,
-    -average_transaction_value, -first_tx, -last_tx, -last_transaction_date, -first_transaction_date, -last_survey_date,    
-    -avg_daily_transactions, -total_tx_volume, -avg_tx_value, -tx_count, -transaction_frequency,
-    -base_satisfaction, -tx_satisfaction, -product_satisfaction, -app_store_rating,
-    -churn_probability, -customer_tenure,
-    -acquisition_channel, -resolved_tickets_ratio, -feedback_sentiment, -support_tickets_count, -failed_transactions, -international_transactions, -weekend_transaction_ratio
+  dplyr::select(
+    -marital_status, -occupation, -gender, -location, -average_transaction_value, -first_tx, -last_tx, -last_transaction_date, -first_transaction_date, -last_survey_date, -avg_daily_transactions, -total_tx_volume, -avg_tx_value, -tx_count, -monthly_transaction_count, -base_satisfaction, -tx_satisfaction, -product_satisfaction, -app_store_rating, -customer_tenure, -resolved_tickets_ratio, -support_tickets_count, -failed_transactions,  -weekend_transaction_ratio, -complaint_topics, -credit_utilization_ratio, -feature_requests, -customer_id, -app_logins_frequency, -nps_score, -feedback_sentiment
            
   )
 
@@ -143,9 +127,354 @@ colnames(df_engineered)
 
 ```
 
+### Check Data Types
+We first need to evaluate the selected variables to understand their current formats and value ranges. This assessment ensures that our transformation logic accurately aligns with the data distribution and business context.
 
-### Convert data types （包括按照 poLCA 要求将 0/1 转为 1/2，对 age, income_bracket, tx_count, total_transaction_volume 等关键指标进行科学分箱
+```{r}
+library(tidyverse)
 
+# define the final 27 selected variables for cluster analysis
+selected_vars <- c(
+  "age", "income_bracket", "education_level", "household_size",
+  "acquisition_channel", "customer_segment", "savings_account", "credit_card",
+  "personal_loan", "investment_account", "insurance_product", "active_products",
+  "feature_usage_diversity", "bill_payment_user", "auto_savings_enabled",
+  "international_transactions", "satisfaction_score", "churn_probability",
+  "clv_segment", "total_transaction_volume", "transaction_frequency", "preferred_transaction_type",
+  "customer_lifetime_value", "user_tenure_days", "days_since_last_tx"
+)
+
+# display data types, sample values, value range, unique count
+df_inspection <- df_engineered %>%
+  dplyr::select(all_of(selected_vars)) %>%
+  map_df(~ tibble(
+    Data_Type = class(.x)[1],
+    Sample_Values = paste(head(unique(na.omit(.x)), 3), collapse = ", "),
+    Min = if(is.numeric(.x)) as.character(min(.x, na.omit = TRUE)) else "-",
+    Max = if(is.numeric(.x)) as.character(max(.x, na.omit = TRUE)) else "-",
+    Unique_Count = n_distinct(.x)
+  ), .id = "Variable")
+
+
+print(df_inspection, n = Inf)
+```
+### Convert Data Types
+To prepare for poLCA cluster analysis, the raw data was restructured into a categorical format optimized for behavioral segmentation. Also all features were coerced into positive integers ($1, 2, 3...$) then transferred to factors, and rows with missing values were removed, to meet the strict requirements of the poLCA algorithm.
+
+- Custom Binning: High-variance metrics like total_transaction_volume and customer_lifetime_value were binned using fixed business thresholds (e.g., $<100M$, $100M-1B$, $>1B$) to better isolate "Whale" users from the mass market.
+- Lifecycle Tiers: Engagement variables (transaction_frequency, days_since_last_tx, user_tenure_days) were grouped into stages (e.g., Active, At Risk, Loyal) to capture user stickiness.
+- Fixed Mapping: Qualitative variables (acquisition_channel, customer_segment) were converted to factors with set levels to ensure consistent numeric encoding.
+
+
+```{r}
+
+df_labeled <- df_engineered %>%
+  mutate(acquisition_channel = factor(acquisition_channel)) %>%
+  mutate(acquisition_channel = recode(acquisition_channel, 
+                                      "Partnership" = "Indirect", 
+                                      "Referral" = "Indirect")) %>%
+  
+  mutate(customer_segment = recode(customer_segment,
+                                   "inactive" = "Low_Use",
+                                   "occasional" = "Low_Use",
+                                   "regular" = "Mid_Use",
+                                   "power" = "High_Use")) %>%
+  
+  mutate(international_transactions = ifelse(international_transactions == 0, "None", "Has_International")) %>%
+  
+  mutate(income_bracket = recode(income_bracket, "Very High" = "High")) %>%
+  
+  mutate(education_level = recode(education_level, 
+                                  "Master" = "Postgrad", 
+                                  "PhD" = "Postgrad")) %>%
+
+  mutate(active_products = cut(active_products, 
+                               breaks = c(0, 2, Inf), 
+                               labels = c("Low_Holdings", "High_Holdings"))) %>%
+
+  mutate(satisfaction_score = cut(satisfaction_score, 
+                                  breaks = c(0, 3, 5, Inf), 
+                                  labels = c("Dissatisfied", "Neutral", "Satisfied"))) %>%
+  
+  mutate(clv_segment = recode(clv_segment, 
+                              "Bronze" = "Standard", 
+                              "Silver" = "Standard", 
+                              "Gold" = "High_Value", 
+                              "Platinum" = "High_Value")) %>%
+  mutate(clv_segment = factor(clv_segment, levels = c("Standard", "High_Value"))) %>%
+  
+  mutate(preferred_transaction_type = recode(preferred_transaction_type,
+                                             "Deposit" = "Inflow_Eco",
+                                             "Payment" = "Inflow_Eco",
+                                             "Transfer" = "Outflow_Transfer",
+                                             "Withdrawal" = "Outflow_Transfer")) %>%
+  mutate(preferred_transaction_type = factor(preferred_transaction_type, 
+                                             levels = c("Inflow_Eco", "Outflow_Transfer"))) %>%
+  
+
+  mutate(total_transaction_volume = cut(total_transaction_volume, 
+                                        breaks = c(0, 100000000, 1000000000, Inf), 
+                                        labels = c("Mass_Volume", "High_Volume", "Whale_Volume"),
+                                        include.lowest = TRUE)) %>%
+  
+  mutate(customer_lifetime_value = cut(customer_lifetime_value, 
+                                       breaks = c(-1, 50000000, 500000000, Inf), 
+                                       labels = c("Low_CLV", "Mid_CLV", "High_CLV"))) %>%
+  
+  mutate(transaction_frequency = cut(transaction_frequency, 
+                                     breaks = c(0, 1, 10, Inf), 
+                                     labels = c("Infrequent", "Regular", "Power_User"),
+                                     include.lowest = TRUE)) %>%
+  
+  mutate(user_tenure_days = cut(user_tenure_days, 
+                                breaks = c(0, 90, 270, Inf), 
+                                labels = c("New_User", "Developing", "Loyal_User"),
+                                include.lowest = TRUE)) %>%
+  
+  mutate(days_since_last_tx = cut(days_since_last_tx, 
+                                  breaks = c(-1, 7, 30, Inf), 
+                                  labels = c("Active_Recent", "Warning_At_Risk", "Churned_Inactive"))) %>%
+  
+  mutate(churn_probability = cut(churn_probability, 
+                                 breaks = c(-Inf, 0.3, 0.7, Inf), 
+                                 labels = c("Safe", "Concern", "High_Risk"))) %>%
+
+  mutate(across(c(savings_account, credit_card, personal_loan, investment_account, 
+                  insurance_product, bill_payment_user, auto_savings_enabled), 
+                ~ recode(as.numeric(.x), `1` = "Yes", `0` = "No"))) %>%
+  
+  mutate(age = cut(age, breaks = c(0, 30, 50, Inf), labels = c("Young", "MiddleAge", "Senior"))) %>%
+  mutate(household_size = cut(household_size, breaks = c(0, 2, 5, Inf), labels = c("Small", "Medium", "Large"))) %>%
+  
+  mutate(feature_diversity = cut(feature_usage_diversity, breaks = c(-Inf, 2, 6, Inf), 
+                                 labels = c("Basic", "Intermediate", "Power"))) %>%
+  
+  mutate(across(where(is.character), as.factor)) %>%
+
+  # Selection and Cleaning
+  dplyr::select(age, income_bracket, education_level, household_size, acquisition_channel,
+                customer_segment, savings_account, credit_card, personal_loan, investment_account, 
+                insurance_product, active_products, feature_diversity, 
+                bill_payment_user, auto_savings_enabled, international_transactions, satisfaction_score, 
+                clv_segment, total_transaction_volume, churn_probability,
+                transaction_frequency, preferred_transaction_type, customer_lifetime_value, 
+                user_tenure_days, days_since_last_tx) %>%
+  na.omit()
+
+df_lca_final <- df_labeled %>%
+  mutate(across(everything(), ~ as.numeric(as.factor(.x))))
+
+
+summary(df_lca_final)
+cat("\nOriginal dataset size (Raw): ", nrow(df_engineered), "\n")
+cat("Processed dataset size (LCA Final): ", nrow(df_lca_final), "\n")
+```
 
 ## Cluster Analysis
+
+### Latent Class Analysis
+
+LCA is chosen because it is a probability-based method specifically designed for categorical data. While traditional methods like K-Means rely on physical distance between numerical points, LCA identifies hidden segments based on the likelihood of shared behavioral and demographic patterns. 
+This makes it the most effective tool for our dataset, as it allows us to group customers into distinct, actionable categories that align with business logic.
+
+```{r}
+library(poLCA)
+
+f <- as.formula(cbind(age, income_bracket, education_level, household_size, acquisition_channel,
+                      customer_segment, savings_account, credit_card, personal_loan, 
+                      investment_account, insurance_product, active_products, 
+                      feature_diversity, bill_payment_user, 
+                      auto_savings_enabled, international_transactions, satisfaction_score, 
+                      clv_segment, total_transaction_volume, 
+                      transaction_frequency, preferred_transaction_type, 
+                      customer_lifetime_value, user_tenure_days, days_since_last_tx, churn_probability) ~ 1)
+
+set.seed(1234)
+LCA_6 <- poLCA(f, data = df_lca_final, nclass = 6, nrep = 5, maxiter = 5000, verbose = FALSE)
+
+print(LCA_6)
+
+# --- Business Label Reference ---
+lapply(df_labeled, levels)
+```
+
+### Predicted cluster distribution
+This section visualizes the relative size of each identified customer groups.
+```{r}
+library(ggplot2)
+library(dplyr)
+library(scales)
+
+
+df_labeled$cluster <- as.factor(LCA_6$predclass)
+
+counts <- table(df_labeled$cluster)
+
+prop_data <- data.frame(
+  ID = names(counts),
+  Value = as.numeric(counts),
+  stringsAsFactors = FALSE
+)
+
+prop_data$Percentage <- prop_data$Value / sum(prop_data$Value)
+prop_data$Legend_Label <- paste0(
+  "Cluster ", prop_data$ID, 
+  " (", scales::percent(prop_data$Percentage, accuracy = 0.1), ")"
+)
+
+library(ggplot2)
+ggplot(prop_data, aes(x = 2, y = Percentage, fill = ID)) +
+  geom_bar(stat = "identity", width = 0.8, color = "white") +
+  coord_polar(theta = "y", start = 0) +
+  xlim(0.5, 2.5) + 
+  scale_fill_discrete(labels = prop_data$Legend_Label) +
+  theme_void() +
+  theme(
+    legend.position = "right",
+    plot.title = element_text(hjust = 0.5, face = "bold", size = 14)
+  ) +
+  labs(
+    title = "Cluster Distribution (Predicted)",
+    fill = "Segments"
+  )
+```
+
+
+
+### Assess AIC, BIC, Entropy
+To ensure the statistical validity of the model, we assess key metrics AIC, BIC, and Entropy.
+
+- AIC & BIC (Information Criteria): These metrics evaluate the balance between model fit and complexity. Lower values generally indicate a more optimal model that explains the data well without overfitting.
+
+- Entropy: This measures classification precision. It indicates how distinctly the model separates individuals into clusters. Values range from 0 to 1, where higher score represents high certainty and minimal overlap between groups.
+
+```{r}
+calculate_entropy <- function(model) {
+  error_prior <- -sum(model$P * log(model$P))
+  
+  entropy_obs <- function(p) {
+    p <- p[p > 0] 
+    return(-sum(p * log(p)))
+  }
+  error_post <- mean(apply(model$posterior, 1, entropy_obs))
+  lca_entropy <- (error_prior - error_post) / error_prior
+  return(lca_entropy)
+}
+
+entropy_val <- calculate_entropy(LCA_6)
+cat("AIC:", LCA_6$aic, " | BIC:", LCA_6$bic, " | Entropy:", entropy_val, "\n")
+```
+
+
+## Customer Profile Visualization
+To interpret and visualize the different classes of the LCA model, we come out with heat map and stacked bar chart to map cluster assignments against behavioral and demographic indicators.
+
+### Feature Intensity Heatmap
+The heatmap provides a visual comparison of how each cluster performs across key metrics. 
+
+- Logic: To compare clusters, we convert categorical labels into numerical ranks and calculate the mean "level" for each group. Because these raw averages often fall into narrow ranges, subtle differences can be difficult to see on a standard scale. We apply 0-1 scaling to magnify the relative performance and highlights the difference.
+- Layout: The X-axis follows the order of selected variables (priority indicators), while the Y-axis (Clusters) is sorted by a selected metric, such as churn_probability, to create a clear value-based hierarchy.
+- Interpretation: Darker blue represents a higher concentration of "top-tier" traits, such as higher spending, longer tenure, or greater satisfaction.
+
+```{r}
+# ==============================================================================
+# Heatmap 
+# ==============================================================================
+library(ggplot2)
+library(dplyr)
+library(tidyr)
+library(plotly) # used for plotting charts
+library(scales) # used for percentage presentation
+
+# map the Cluster IDs back to the descriptive dataset (df_labeled)
+df_labeled$cluster <- factor(LCA_6$predclass)
+
+# select your interested indicators
+# X-axis order: display order consistent with input order, with most interested ones on the left
+selected_vars <- c("churn_probability", "customer_lifetime_value", 
+                   "total_transaction_volume", "user_tenure_days", "days_since_last_tx")
+
+# calculate average value, then rescale value to [0,1] to show group difference 
+heatmap_data <- df_labeled %>%
+  group_by(cluster) %>%
+  summarise(across(all_of(selected_vars), 
+                   ~ mean(as.numeric(as.factor(.x)), na.rm = TRUE))) %>%
+  mutate(across(-cluster, ~ as.vector(scales::rescale(.)))) %>% # rescale
+  pivot_longer(-cluster, names_to = "Variable", values_to = "Intensity")
+
+# Y-axis order: user can select to sort classes based on most care indicator, here we take churn_probability as example
+cluster_order <- heatmap_data %>%
+  filter(Variable == "churn_probability") %>%
+  arrange(desc(Intensity)) %>% 
+  pull(cluster)
+
+# apply heat map with selected X-axis, Y-axis order
+heatmap_data <- heatmap_data %>%
+  mutate(
+    Variable = factor(Variable, levels = selected_vars),
+    cluster = factor(cluster, levels = rev(cluster_order)) 
+  )
+
+# draw heat map
+ggplot(heatmap_data, aes(x = Variable, y = cluster, fill = Intensity)) +
+  geom_tile(color = "gray90", linewidth = 0.5) +
+  
+  scale_fill_gradient(low = "white", high = "#2C6BAA") +
+  
+  labs(title = "Customer Profiles (Relative Intensity)",
+       subtitle = "Colors represent relative ranking across clusters\nClusters ranked by total_transaction_volume; Columns in input order",
+       x = "Selected Indicators", 
+       y = "Clusters",
+       fill = "Relative Score") +
+  
+  theme_minimal() +
+  theme(
+    axis.text.x = element_text(angle = 45, hjust = 1, color = "black", size = 10),
+    axis.text.y = element_text(color = "black", size = 10),
+    panel.grid = element_blank(),
+    plot.title = element_text(face = "bold", size = 14),
+    plot.subtitle = element_text(size = 11, color = "gray30")
+  )
+```
+
+### Segment Composition Bar Chart
+To examine the internal distribution of specific variables, we used 100% stacked bar charts.
+
+- Logic: A custom R function generates distributions for any selected variable (e.g., NPS or Income), identifying the exact proportions of customer types within each segment.
+
+```{r}
+# ==============================================================================
+# Stacked Bar Chart
+# ==============================================================================
+# Create a function to enable user to pass in any interested indicator to distribution among classes
+plot_cluster_composition <- function(data, target_var, title_name) {
+  p <- ggplot(data, aes(x = cluster, fill = !!sym(target_var))) +
+    geom_bar(position = "fill") +
+    scale_y_continuous(labels = percent) +
+    scale_fill_brewer(palette = "Blues") +
+    labs(title = paste(title_name, "by Cluster"),
+         x = "Cluster ID",
+         y = "Percentage (%)",
+         fill = title_name) +
+    theme_minimal()
+  
+  return(p)
+}
+
+# Example 1：check nps_score 
+p_nps <- plot_cluster_composition(df_labeled, "churn_probability", "Churn Level")
+print(p_nps)
+
+# Example 2：check income_bracket 
+p_income <- plot_cluster_composition(df_labeled, "income_bracket", "Income Level")
+print(p_income)
+
+# ------------------------------------------------------------------------------
+# Interactive Plotly
+# ------------------------------------------------------------------------------
+ggplotly(p_nps)
+```
+
+
+
 
