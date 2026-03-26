@@ -1,0 +1,81 @@
+---
+title: "Meeting Minutes 2"
+author: "Group5"
+date: "March 11,2026"
+---
+
+# Meeting Summary
+
+In Attendance: Xu Qianqian, Jin Jia Ying, Yao Yao
+
+## 1. Discussion
+- The team mainly discussed how to shape the VAA project proposal, what should be included in it, and how to avoid overlap across members’ work. They used a previous “Golden Goose” sample as the main reference for proposal structure, and agreed the proposal should cover motivation, problems, solution, data, methodology and analytical approach, data visualisation/storyboard, and project management/Gantt chart.
+
+- A large part of the discussion focused on Jia Ying’s EDA/CDA contribution. She proposed positioning her section as background and business context, covering customer landscape and transaction patterns before the team moves into issues, problems, and solutioning. The group also discussed how transaction views could be filtered by customer segments, while keeping clustering work separate under Yao Yao’s scope.
+
+- The team also discussed storyboard expectations. There was uncertainty over whether the storyboard must be hand-drawn or whether a cleaner slide-based sketch would still be acceptable. They agreed to check with the professor, and meanwhile considered using a consistent visual style across all members’ storyboard sections.
+
+- They further discussed project workflow and collaboration. The proposal will first be drafted in Google Docs, then uploaded to the group website. For the larger project, the team also discussed using GitHub branches to work separately and merge stable code into the main branch.
+
+
+## 2.  Disagreements
+- The main disagreements were not major conflicts, but differences in interpretation:
+  - Whether Jia Ying’s proposed prototype overlaps with clustering/classification work
+    - Qianqian initially questioned whether Jia Ying’s work was drifting into clustering territory.
+    - Jia Ying clarified that her work is limited to EDA/CDA and descriptive background, not clustering itself.
+    
+  - Whether storyboard should be hand-drawn
+    - Qianqian believed the professor wanted hand-drawn storyboard sketches.
+    - Jia Ying and Yao Yao felt slide-drawn or cleaner mockups might look more professional, but agreed this should be confirmed with the professor.
+
+- How to interpret website vs final app submission
+  - Jia Ying was initially unsure whether the group should submit a website, a Shiny app, or combine proposal materials into the app.
+  - The team clarified that the website is for hosting proposal and project materials, while the Shiny app is the final product to be linked later.
+
+
+## 3. Consensus made
+The group reached these agreements:
+- The proposal will follow the Golden Goose sample structure as a working reference.
+- Jia Ying’s EDA/CDA section will serve as background/context, focusing on customer landscape and transaction patterns before the problem-solution sections.
+- Members will each contribute their own parts for methodology, analytical approach, and visualisation/storyboard inputs.
+- The proposal should be completed by Saturday, with Sunday reserved for review / upload and possibly an offline check after class.
+- The proposal draft will be compiled first in Google Docs, then uploaded to the group website.
+- For future coding collaboration, the team will work in separate branches / separate stable workstreams and merge finalised work into the main project repository.
+
+
+## 4. Action items
+- Use Golden Goose sample as the template/reference for proposal sections.
+
+- Complete proposal draft by Saturday and review afterward as a group.
+
+- Ask professor on Piazza whether a slide-drawn storyboard is acceptable instead of a fully hand-drawn one. Qianqian said she would ask and update the team.
+
+- Each member to prepare their own methodology / visualisation inputs for the proposal.
+
+- Upload proposal materials to group website after drafting.
+
+- Prepare meeting minutes, which Jia Ying said she planned to do.
+
+
+## 5. Record of division of labour
+Based on the final assignment discussed:
+- Xu Qianqian
+  - Take problem and motivation
+  - Ask professor / Piazza about storyboard requirement
+  - Share updates with the group
+
+- Yao Yao
+  - Take solution and data
+  - Continue clustering-related contribution
+  - Advise on GitHub / branching workflow
+
+- Jin Jia Ying
+  - Take methodology-related EDA/CDA background section
+  - Focus on customer landscape and transaction pattern/context
+  - Help align / standardise storyboard style across members
+  - Prepare meeting minutes
+  - She had also already created the website/repository basis mentioned in discussion.
+
+- All members
+  - Contribute their own parts to methodology, analytical approach, and data visualisation/storyboard
+  - Review proposal together after drafting

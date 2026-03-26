@@ -1,0 +1,26 @@
+project:
+  type: website
+
+website:
+  title: "ISSS608 Group 5"
+  navbar:
+    left:
+      - href: index.html     
+        text: "Home"
+      - href: proposal.html
+        text: "Proposal"
+        
+    right:
+      - text: "Meeting Minutes"
+        menu: 
+          - text: "Meeting Minutes 1"
+            href: Meeting_minutes/minutes1.html
+          - text: "Meeting Minutes 2"
+            href: Meeting_minutes/minutes2.html
+
+
+
+format:
+  html:
+    theme: cosmo
+    toc: true

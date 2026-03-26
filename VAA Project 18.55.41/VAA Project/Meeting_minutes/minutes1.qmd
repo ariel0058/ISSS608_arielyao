@@ -1,0 +1,63 @@
+---
+title: "Meeting Minutes 1"
+author: "Group5"
+date: "February 26,2026"
+---
+
+# Meeting Summary
+
+In Attendance: Xu Qianqian, Jin Jia Ying, Yao Yao
+
+## 1. Discussion
+- The team first discussed the selection of the project dataset and showed a preference for using the fintech dataset, mainly because it contains more variables and provides more room for analysis. In comparison, some of the other candidate datasets seemed more limited, such as being more focused on geospatial or time-series analysis.
+
+- The group also discussed the relationship between Take-home Exercise 2 and the final project. The general understanding was that each member would first work on an individual prototype or analysis component based on the same dataset, and these components would later be integrated into the final project website or Shiny application.
+
+- Possible analysis directions were also discussed, including:
+  - EDA / CDA
+  - Cluster analysis
+  - Predictive or explanatory modeling
+  - UI design requirements
+
+In addition, the team referred to a senior’s sample / prototype assignment and considered following a similar structure: clean the data first, then complete one analysis module together with a corresponding UI design.
+
+## 2. Disagreements
+- There were no major disagreements during the meeting, but there were several points that were not yet fully clarified:
+  - Whether EDA and CDA should be combined: Some members noticed that in certain samples, EDA and CDA were grouped together, while others felt that they could also be handled separately depending on the team’s arrangement.
+  - When to begin modeling: There was some discussion about whether each member should first complete their own prototype (such as EDA/CDA, clustering, or another analysis component) before deciding on the final modeling direction for the project. In the end, the group appeared comfortable with this approach.
+
+- The scope and naming of the analysis modules were still somewhat unclear, especially regarding how explanatory modeling, predictive modeling, and decision tree analysis would align with the course requirements.
+
+## 3. Consensus Made
+- The main agreements reached during the meeting were as follows:
+  - The team agreed to use the same fintech dataset for both Take-home Exercise 2 and the final project.
+  - The team agreed that Take-home Exercise 2 would serve as a component or precursor to the final project, with each member working on one part first and then combining the outputs later.
+  - The team agreed to divide the analysis work first, rather than spending too much time discussing the final model at the initial stage. This was seen as a more efficient approach and a good way to generate useful input for the final project.
+
+- In terms of timeline:
+  - The team aimed to complete each person’s prototype / take-home assignment part by 8 March.
+  - The project proposal deadline is 15 March.
+  - The team also agreed to hold the next meeting around next weekend, with the exact timing to be confirmed later.
+
+## 4. Action Items
+- Confirm and proceed with the fintech dataset as the common dataset for the group.
+
+- Each member should start working on their assigned analysis prototype.
+
+- At the same time, the team should gradually prepare the key contents required for the project proposal, including:
+  - the issue / problem statement
+  - the motivation
+  - the proposed approach / analysis direction
+
+- The meeting transcript / notes should be organized into a shared Google Doc for future reference and updates.
+
+- Before the next meeting, members should record their ideas and progress in the shared document.
+
+## 5. Record of Division of Labour
+- Based on the transcript, the team made an initial division of labour as follows:
+  - Yao Yao – responsible for cluster analysis
+  - Xu Qianqian – responsible for predictive modeling, and may also consider related explanatory modeling if appropriate
+  - Jin Jia Ying – responsible for EDA / CDA
+
+- In addition, the team generally agreed that these individual components would later be integrated into one final project, website, or Shiny application.
+

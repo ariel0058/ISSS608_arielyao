@@ -1,0 +1,130 @@
+---
+title: "Proposal"
+author: "Group5"
+---
+
+# Background
+
+## The Problems
+
+## Motivation of the project
+
+# Our Solution
+
+# The Data
+
+# Methodology and Analytical Approach
+
+## EDA/CDA
+
+## Clustering
+
+## Predictive Modelling
+
+# Data Visualization Method
+
+# R Shiny Packages
+
+# Project Management
+
+The project timeline is structured in four phases: proposal preparation, data and methodology development, prototype and visualisation design, and final delivery. This sequencing ensures that conceptual framing is completed before implementation, while allowing sufficient time for analysis refinement, poster preparation, and final submission.
+
+```{r}
+#| echo: false
+
+pacman::p_load(tidyverse, lubridate, ggplot2)
+
+gantt_data <- tribble(
+  ~task, ~start, ~end, ~owner,
+  "Problem Framing", "2026-03-08", "2026-03-11", "Xu Qianqian",
+  "Storyboard", "2026-03-08", "2026-03-12", "Xu Qianqian",
+  "Proposal Drafting", "2026-03-10", "2026-03-14", "All",
+  "Proposal Publishing", "2026-03-14", "2026-03-15", "All",
+  "Data Preparation", "2026-03-09", "2026-03-16", "Yao Yao",
+  "EDA/CDA Methodology", "2026-03-10", "2026-03-22", "Jin Jiaying",
+  "Clustering Analysis", "2026-03-12", "2026-03-22", "Yao Yao",
+  "Prototype Refinement", "2026-03-15", "2026-03-29", "All",
+  "Poster Drafting", "2026-03-24", "2026-04-01", "All",
+  "Final Presentation", "2026-04-01", "2026-04-05", "All"
+) %>%
+  mutate(
+    start = as.Date(start),
+    end = as.Date(end),
+    owner = factor(owner, levels = c("Xu Qianqian", "Yao Yao", "Jin Jiaying", "All")),
+    task = factor(task, levels = rev(task)),
+    y_id = rev(row_number())
+  )
+
+milestones <- tribble(
+  ~milestone, ~date,
+  "Proposal Due", as.Date("2026-03-15"),
+  "Poster Upload", as.Date("2026-04-01"),
+  "Presentation", as.Date("2026-04-04"),
+  "Final Submission", as.Date("2026-04-05")
+)
+
+ggplot(gantt_data) +
+  geom_segment(
+    aes(x = start, xend = end, y = y_id, yend = y_id, color = owner),
+    linewidth = 7,
+    lineend = "round"
+  ) +
+  geom_vline(
+    data = milestones,
+    aes(xintercept = date),
+    linetype = "dashed",
+    color = "red3",
+    linewidth = 0.5,
+    alpha = 0.7
+  ) +
+  scale_y_continuous(
+    breaks = gantt_data$y_id,
+    labels = gantt_data$task,
+    expand = expansion(add = c(0.6, 0.8))
+  ) +
+  scale_x_date(
+    limits = c(as.Date("2026-03-07"), as.Date("2026-04-05")),
+    date_breaks = "3 days",
+    date_labels = "%b %d",
+    expand = expansion(mult = c(0.01, 0.02))
+  ) +
+  scale_color_manual(
+    values = c(
+      "Xu Qianqian" = "#E07A6A",
+      "Yao Yao" = "#93B43B",
+      "Jin Jiaying" = "#78C2C9",
+      "All" = "#A77AE8"
+    )
+  ) +
+  labs(
+    title = "Project Gantt Chart",
+    subtitle = "Timeline for proposal, analysis, prototype development, and final delivery",
+    x = "Timeline",
+    y = NULL,
+    color = NULL
+  ) +
+  guides(
+  color = guide_legend(
+    nrow = 1,
+    byrow = TRUE,
+    override.aes = list(linewidth = 4)
+  )
+) +
+  theme_minimal(base_size = 12) +
+  theme(
+    panel.grid.minor = element_blank(),
+    panel.grid.major.y = element_line(color = "grey88", linewidth = 0.5),
+    panel.grid.major.x = element_line(color = "grey92", linewidth = 0.3),
+    axis.text.y = element_text(size = 11, hjust = 0),
+    axis.text.x = element_text(angle = 45, hjust = 1),
+    axis.ticks.y = element_blank(),
+    plot.title = element_text(face = "bold", size = 18),
+    plot.subtitle = element_text(size = 11, margin = margin(b = 10)),
+    legend.position = "bottom",
+    legend.text = element_text(size = 10),
+    legend.spacing.x = unit(1.2, "cm"),
+    legend.key.width = unit(1.2, "cm"),
+    legend.key.height = unit(0.6, "cm"),
+    plot.margin = margin(20, 20, 20, 20)
+  )
+```
